@@ -33,6 +33,6 @@ Many more function can and will be added...
 
 ###Setup
 
-Install via the bundled Plugin Manager or manually using this URL:
+1. Manually install the plugin from `octoprint_mobile` to ~/.octoprint/plugins/mobile
 
-https://github.com/MoonshineSG/Octoprint-Mobile/archive/master.zip
+2. Compile, sign and install the ios app. Free developer license from Apple needed.
