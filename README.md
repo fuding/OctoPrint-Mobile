@@ -28,6 +28,9 @@ The calibration screen. The main reason why this app was build - i got tired of 
 ![screenshot](screenshot_3.png)
 
 
+![screenshot](octoprint.gif)
+
+
 Many more function can and will be added... 
 
 
