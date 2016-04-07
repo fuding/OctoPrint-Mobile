@@ -192,6 +192,14 @@ function PrinterModel(){
 		sendSwitchCommand({"command":"power","status":!self.power});
 	}
 
+	self.resetPrinter = function(){
+		bootbox.confirm({ size: 'large', message: "This will restart your printer board. Confirm?", callback: function(result) {
+		  if (result) {
+			sendSwitch({"command":"reset"});
+		  }
+		}});
+	}
+
 	self.toggleMute = function (){
 		sendSwitchCommand({"command":"mute","status":!self.mute});
 	}
