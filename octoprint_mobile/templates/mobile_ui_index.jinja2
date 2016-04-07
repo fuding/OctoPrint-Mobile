@@ -57,7 +57,6 @@
 								<button type="button" class="btn btn-lg btn-danger" data-bind="enable: canCancel, click: cancelPrint"><i class="fa fa-stop fa-fw"></i>&nbsp;Cancel</button>
 							</div>
 						</div>
-
 					</div>
 
 					<div id="camera_tab" class="printer">
@@ -123,7 +122,32 @@
 							</div>
 						</div>
 						<div class="row row-half-screen">
-							&nbsp;
+								<div class="btn-group-vertical">
+									<div class="btn-group">
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X10 F6000')"><i class="fa a-angle-up  fa-fw"></i>X10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X1 F6000')"><i class="fa a-angle-up  fa-fw"></i>X1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X0.1 F6000')"><i class="fa a-angle-up  fa-fw"></i>X0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-0.1 F6000')"><i class="fa a-angle-up  fa-fw"></i>X-0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-1 F6000')"><i class="fa a-angle-up  fa-fw"></i>X-1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-10 F6000')"><i class="fa a-angle-up  fa-fw"></i>X-10</button></div>
+									</div>
+									<div class="btn-group"> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y10 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y1 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y0.1 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-0.1 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y-0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-1 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y-1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-10 F6000')"><i class="fa a-angle-up  fa-fw"></i>Y-10</button></div>
+									</div>
+									<div class="btn-group">
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z10 F300')"><i class="fa a-angle-up  fa-fw"></i>Z10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z1 F300')"><i class="fa a-angle-up  fa-fw"></i>Z1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z0.1 F300')"><i class="fa a-angle-up  fa-fw"></i>Z0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-0.1 F300')"><i class="fa a-angle-up  fa-fw"></i>Z-0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-1 F300')"><i class="fa a-angle-up  fa-fw"></i>Z-1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-10 F300')"><i class="fa a-angle-up  fa-fw"></i>Z-10</button></div>
+									</div>
+							</div>
 						</div>
 						
 					</div>	

@@ -69,6 +69,7 @@ function OffsetModel(printer) {
 	self.sendRelativeG = function(z){
 		sendCommand(["G91", "G1 Z"+z, "M114", "G90"]);
 	}
+
 }
 
 function ActionModel(printer){
@@ -142,7 +143,6 @@ function ActionModel(printer){
 		    sendJobCommand("cancel");
 		} 
 	}
-
 }
 
 function PrinterModel(){
@@ -203,7 +203,11 @@ function PrinterModel(){
 	self.toggleMute = function (){
 		sendSwitchCommand({"command":"mute","status":!self.mute});
 	}
-	
+
+	self.sendRelativeG1 = function(data){
+		sendCommand(["G91", "G1 "+data, "G90"]);
+	}
+		
 	self.setStatus = function(value){
 		self.status(value);
 		
