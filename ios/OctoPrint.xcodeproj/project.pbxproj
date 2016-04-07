@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		A54D761F1CB35B4200BE5E12 /* www in Resources */ = {isa = PBXBuildFile; fileRef = A54D761E1CB35B4200BE5E12 /* www */; };
 		A55B5ED61C6830CB00C07282 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A55B5ED41C6830CB00C07282 /* Main.storyboard */; };
-		A5647C151C63235C00187913 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A5647C141C63235C00187913 /* SystemConfiguration.framework */; };
 		A580D6DA1C6852EC00CB2744 /* octoprint-logo.png in Resources */ = {isa = PBXBuildFile; fileRef = A580D6D91C6852EC00CB2744 /* octoprint-logo.png */; };
 		A598EABC1C678EBF00FCA399 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A598EABB1C678EBF00FCA399 /* Settings.bundle */; };
 		A5A87F041C685BE10077A4C1 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = A5A87F021C685BE10077A4C1 /* LaunchScreen.xib */; };
@@ -22,7 +21,6 @@
 /* Begin PBXFileReference section */
 		A54D761E1CB35B4200BE5E12 /* www */ = {isa = PBXFileReference; lastKnownFileType = folder; name = www; path = Octoprint/www; sourceTree = "<group>"; };
 		A55B5ED51C6830CB00C07282 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Octoprint/Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A5647C141C63235C00187913 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
 		A580D6D91C6852EC00CB2744 /* octoprint-logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "octoprint-logo.png"; sourceTree = "<group>"; };
 		A598EABB1C678EBF00FCA399 /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		A5A87F031C685BE10077A4C1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Octoprint/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -41,7 +39,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A5647C151C63235C00187913 /* SystemConfiguration.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,7 +60,6 @@
 				A5F554501C68281B001DED1A /* ViewController.h */,
 				A5F554511C68281B001DED1A /* ViewController.m */,
 				A598EABB1C678EBF00FCA399 /* Settings.bundle */,
-				A5647C141C63235C00187913 /* SystemConfiguration.framework */,
 				BE526F211B6E991600005B15 /* Products */,
 			);
 			sourceTree = "<group>";

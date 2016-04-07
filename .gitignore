@@ -1,3 +1,6 @@
 
-ios/DerivedData/
+ios/OctoPrint.xcodeproj/xcuserdata/
+ios/OctoPrint.xcodeproj/project.xcworkspace/xcuserdata/
+octoprint_mobile_2
 .pyc
+
