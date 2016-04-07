@@ -207,6 +207,10 @@ function PrinterModel(){
 	self.sendRelativeG1 = function(data){
 		sendCommand(["G91", "G1 "+data, "G90"]);
 	}
+
+	self.sendAbsoluteG1 = function(data){
+		sendCommand("G1 "+data);
+	}
 		
 	self.setStatus = function(value){
 		self.status(value);

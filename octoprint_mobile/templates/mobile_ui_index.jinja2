@@ -125,38 +125,38 @@
 								<div class="btn-group-vertical">
 									<div class="btn-group">
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary disabled"><i class="fa fa-arrow-up  fa-fw"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'X0 F6000')"><i class="fa fa-arrow-left fa-fw"></i></button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger disabled"><i class="fa fa-arrow-down  fa-fw"></i></button></div> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'X180 F6000')"><i class="fa fa-arrow-right fa-fw"></i></button></div> 
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
 									</div> 
 									<div class="btn-group">
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary disabled"><i class="fa fa-arrow-up  fa-fw"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y0.1 F6000')">0.1</button></div>                      
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Y0 F6000')"><i class="fa fa-arrow-down fa-fw fa-rotate-45"></i></button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger disabled"><i class="fa fa-arrow-down  fa-fw"></i></button></div> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Y200 F6000')"><i class="fa fa-arrow-up fa-fw fa-rotate-45"></i></button></div> 
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
 									</div>
 									<div class="btn-group">
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary disabled"><i class="fa fa-arrow-up  fa-fw"></i></button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Z190 F300'"><i class="fa fa-arrow-up fa-fw"></i></button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z10 F300')">10</button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z1 F300')">1</button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z0.1 F300')">0.1</button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-0.1 F300')">0.1</button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-1 F300')">1</button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-10 F300')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger disabled"><i class="fa fa-arrow-down  fa-fw"></i></button></div> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Z0 F300')"><i class="fa fa-arrow-down fa-fw"></i></button></div>
 										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
 									</div>
 							</div>

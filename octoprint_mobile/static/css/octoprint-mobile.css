@@ -220,17 +220,11 @@ body {
 }
 
 .fa-rotate-45 {
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 	 -webkit-transform: rotate(45deg);
-	 -ms-transform: rotate(45deg);
-	 transform: rotate(45deg);
 }
 
 .fa-rotate-315 {
-	filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
 	 -webkit-transform: rotate(-45deg);
-	 -ms-transform: rotate(-45deg);
-	 transform: rotate(-45deg);
 }
 
 .top-border {
@@ -241,7 +235,6 @@ body {
 .zero_border {
     border: 0;
     -webkit-box-shadow: none;
-    box-shadow: none;
 }
 
 .black {
