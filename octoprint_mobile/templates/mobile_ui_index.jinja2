@@ -3,71 +3,134 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta charset="utf-8">
-    <meta name="apple-touch-fullscreen" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
+	<title>Octoprint Mobile</title>
+	<meta name="apple-touch-fullscreen" content="yes" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 	
     {% include 'mobile_ui_stylesheets.jinja2' %}
 </head>
 
 <body>
-	<div id="main" style="display:none;">
+	<div id="main_view" class="view">
 		<div class="container-fluid">
 			<div class="row row-offcanvas row-offcanvas-left">
 				<div class="col-xs-2 sidebar-offcanvas no-padding" id="sidebar" role="navigation">
 					<ul class="nav nav-sidebar">
-						<li><a class="menu-tab menu-tab-selected" id="info_tab_btn"><span class="fa fa-info-circle"></span></a></li>
-						<li><a class="menu-tab" id="print_tab_btn"><span class="fa fa-print"></span></a></li>
-						<li><a class="menu-tab" id="camera_tab_btn"><span class="fa fa-camera"></span></a></li>
-						<li><a class="menu-tab" id="offset_tab_btn"><span class="fa fa-arrows"></span></a></li>
-						<li><a class="menu-tab" id="settings_tab_btn"><span class='fa fa-sliders'></span></a></li>
+						<li><a class="sidebar-nav" id="status_btn"><span class="fa fa-info-circle"></span></a></li>
+						<li><a class="sidebar-nav" id="printer_btn"><span class="fa fa-print"></span></a></li>
+						<li><a class="sidebar-nav" id="movement_btn"><span class='fa fa-arrows'></span></a></li>
+						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-sliders"></span></a></li>
+						<li><a class="sidebar-nav" id="camera_btn"><span class="fa fa-camera"></span></a></li>
 					</ul>
 				</div>
 				<div class="col-xs-10 main no-padding">
 
-					<div id="info_tab" class="printer">
-						<p class="info-bar" data-bind="style: { background: isPower }" id="printer_status"><span data-bind="text: status"></span></p>
-						<p class="info-bar" id="extruder_temp"></p>
-						<p class="info-bar" id="bed_temp"></p>
-						<p class="info-bar" id="printing_time_elapsed"  style="display:none;">00:00:00</p>
-						<p class="info-bar" id="printing_time_left"  style="display:none;">00:00:00</p>
+					<div id="status_panel" class="panel"">
+						<p class="status_bar" data-bind="style: { background: printer.isPower }" id="printer_status"><span data-bind="text: printer.status"></span></p>
+						<p class="status_bar" id="extruder_temp"></p>
+						<p class="status_bar" id="bed_temp"></p>
+						<p class="status_bar" id="printing_time_elapsed" style="display:none;">00:00:00</p>
+						<p class="status_bar" id="printing_time_left" style="display:none;">00:00:00</p>
 					</div>
 
-					<div id="printer_tab">
-						<div class="printer-bar">
+					<div id="printer_panel" class="panel">
+						<div class="printer_bar">
+							<div class="btn-group btn-group-lg">
+								<button type="button"  class="btn btn-default" data-bind="click: printer.toggleMute, enable: has_switch"><i class="fa fa-bell fa-lg" data-bind="style: { color: printer.isMute}"></i>&nbsp;Speaker</button>
+								<button type="button"  class="btn btn-default" data-bind="click: printer.togglePower, disable: ! has_switch || ( printer.printing() || printer.paused())"><i class="fa fa-power-off fa-lg" data-bind="style: { color: printer.isPower}"></i>&nbsp;Power</button>
+							</div>	
+							<div class="btn-group btn-group-lg">
+								<button type="button"  class="btn " data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><i class="fa fa-usb fa-lg"></i><span data-bind="text: (printer.ready() ? '&nbsp;Disconnect' : '&nbsp;Connect')"></span></button>
+								<button type="button"  class="btn btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch"><i class="fa fa-refresh fa-lg"></i>&nbsp;Reset</button>
+							</div>
+							
+						</div>
+						<div class="printer_bar">
+								<div class="btn-group btn-spaced">
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(), click: fansOn"><i class="fa fa-asterisk fa-fw" ></i>&nbsp;Fans On</button>
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(),click: fansOff"><i class="fa fa-asterisk fa-fw" style="color:grey"></i>&nbsp;Fans Off</button>
+								</div>
+								<div class="btn-group btn-spaced">
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.acceptsCommands, click: coolOff"><i class="fa fa-fire-extinguisher fa-fw"></i>&nbsp;Cool Off</button>
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.acceptsCommands, click: motorsOff"><i class="fa fa-gears fa-fw"></i>&nbsp;Motors Off</button>
+								</div>
+						</div>
+						<div class="printer_bar">
+							<span class="curent_file" data-bind="text: printer.fileToPrint"><span>
+						</div>
+						<div class="printer_bar">
+							<div class="btn-group btn-spaced">
+								<button type="button" class="btn btn-lg btn-primary" data-bind="enable: canStartPrinting, click: startPrint"><i class="fa fa-print fa-fw"></i>&nbsp;Print</button>
+								<button type="button" class="btn btn-lg btn-default" data-bind="visible: printer.paused, click: pausePrint"><i class="fa fa-play fa-fw"></i>&nbsp;Resume</button>
+								<button type="button" class="btn btn-lg btn-default" data-bind="visible: !printer.paused(), enable: printer.printing, click: pausePrint"><i class="fa fa-pause fa-fw"></i>&nbsp;Pause</button>
+								<button type="button" class="btn btn-lg btn-danger" data-bind="enable: printer.printing() || printer.paused() , click: cancelPrint"><i class="fa fa-stop fa-fw"></i>&nbsp;Cancel</button>
+							</div>
+						</div>
+					</div>
+
+					<div id="movement_panel" class="panel">
+						<div class="row  row-quarter-screen">
 							<div class="btn-group btn-spaced">
 								<button type="button" class="btn btn-lg btn-default" data-bind="enable: enable, click: homeAll"><i class="fa fa-home fa-fw"></i>&nbsp;Home</button>
 								<button type="button" class="btn btn-lg btn-default" data-bind="enable: enable, click: autoLevel"><i class="fa fa-bars fa-fw"></i>&nbsp;Auto Level</button>
 							</div>
-						</div>
-						<div class="printer-bar">
 							<div class="btn-group btn-spaced">
 								<button type="button" class="btn btn-lg btn-default" data-bind="enable: enable, click: loadFilament"><i class="fa fa-long-arrow-down fa-fw"></i>&nbsp;Load</button>
 								<button type="button" class="btn btn-lg btn-default" data-bind="enable: enable, click: unloadFilament"><i class="fa fa-long-arrow-up fa-fw"></i>&nbsp;Unload</button>
 							</div>
 						</div>
-						<div class="printer-bar">
-							<span class="curent_file" data-bind="text: printer.fileToPrint"><span>
+						<div class="row row-quarter-screen">
+								<div class="btn-group btn-spaced">
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: enable, click: gotoCenter"><i class="fa fa-dot-circle-o fa-fw"></i>&nbsp;Goto Center</button>
+								</div>
 						</div>
-						<div class="printer-bar">
-							<div class="btn-group btn-spaced">
-								<button type="button" class="btn btn-lg btn-primary" data-bind="enable: canPrint, click: startPrint"><i class="fa fa-print fa-fw"></i>&nbsp;Print</button>
-								<button type="button" class="btn btn-lg btn-default" data-bind="visible: showResume, click: pausePrint"><i class="fa fa-play fa-fw"></i>&nbsp;Resume</button>
-								<button type="button" class="btn btn-lg btn-default" data-bind="visible: showPause, enable: printer.isPrinting, click: pausePrint"><i class="fa fa-pause fa-fw"></i>&nbsp;Pause</button>
-								<button type="button" class="btn btn-lg btn-danger" data-bind="enable: canCancel, click: cancelPrint"><i class="fa fa-stop fa-fw"></i>&nbsp;Cancel</button>
-							</div>
+						<div class="row row-half-screen">
+								<div class="btn-group-vertical">
+									<div class="btn-group">
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'X0 F6000')"><i class="fa fa-arrow-left fa-fw"></i></button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X-10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X-0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'X10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'X180 F6000')"><i class="fa fa-arrow-right fa-fw"></i></button></div> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
+									</div> 
+									<div class="btn-group">
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'Y0 F6000')"><i class="fa fa-arrow-down fa-fw fa-rotate-45"></i></button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y-10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y-1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y-0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y0.1 F6000')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y1 F6000')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Y10 F6000')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'Y200 F6000')"><i class="fa fa-arrow-up fa-fw fa-rotate-45"></i></button></div> 
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
+									</div>
+									<div class="btn-group">
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'Z0 F300')"><i class="fa fa-arrow-down fa-fw"></i></button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z-10 F300')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z-1 F300')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z-0.1 F300')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z0.1 F300')">0.1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z1 F300')">1</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendRelativeG1.bind($data, 'Z10 F300')">10</button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: enable, click: sendAbsoluteG1.bind($data, 'Z180 F300')"><i class="fa fa-arrow-up fa-fw"></i></button></div>
+										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
+									</div>
+								</div>
 						</div>
-					</div>
-
-					<div id="camera_tab" class="printer">
-						<img data-bind="click: toggleLights" id="webcam">
-					</div>
-				
-					<div id="offset_tab">
+					</div>	
+					<div id="offset_panel" class="panel"">
 						<div class="col-xs-10 no-padding">
-							<div class="offset-bar">
+							<div class="offset_bar">
 								<div class="input-group full_width square">
-									  <span class="input-group-addon half_width_right square zero_border" id="offset">Offset (M851)</span>
+									  <span class="input-group-addon half_width_right square zero_border" id="offset">Z offset</span>
 									  <input type="text" disabled class="form-control square zero_border black" placeholder="unknown" aria-describedby="offset" data-bind="value: offset">
 								 </div>
 								 <div class="input-group full_width square">
@@ -75,20 +138,20 @@
 									  <input type="text" disabled class="form-control square zero_border black" placeholder="unknown" aria-describedby="current_z" data-bind="value: current_z">
 								</div>
 							</div>
-							<div class="offset-bar">
+							<div class="offset_bar">
 									<button type="button" class="btn btn-default btn-lg" data-bind="click: prepareOffset, enable: canPrepare"><span class='fa fa-download fa-fw'></span>&nbsp;Prepare for offset calculation</button>
 							</div>
-								<div class="offset-bar">
+								<div class="offset_bar">
 									<button type="button" class="btn btn-default btn-lg" data-bind="click: saveOffset, enable: canSave"><span class='fa fa-save fa-fw'></span>&nbsp;Save Z offset</button>
 								</div>
-								<div class="offset-bar">
+								<div class="offset_bar">
 									<div class="btn-group">
-									<button type="button" class="btn btn-default btn-lg" data-bind="click: offsetTest, enable: canPrepare"><span class='fa fa-check-square-o fa-fw'></span>&nbsp;Test</button>
-									<button type="button" class="btn btn-default btn-lg" data-bind="click: offsetDone, enable: canPrepare"><span class='fa fa-home fa-fw'></span>&nbsp;Done</button>
-								</div>
+										<button type="button" class="btn btn-default btn-lg" data-bind="click: offsetTest, enable: canPrepare"><span class='fa fa-check-square-o fa-fw'></span>&nbsp;Test</button>
+										<button type="button" class="btn btn-default btn-lg" data-bind="click: offsetDone, enable: canPrepare"><span class='fa fa-home fa-fw'></span>&nbsp;Done</button>
+									</div>
 							</div>
 
-							<div class="offset-bar top-border">
+							<div class="offset_bar top-border">
 								<div class="btn-group btn-group-lg">
 									<button type="button" class="btn btn-primary" data-bind="click: findZero, enable: canPrepare"><span class='fa fa-anchor fa-fw'></span>&nbsp;Reference</button>
 									<button type="button" class="btn btn-default" data-bind="click: backLeft, enable: canPrepare"><span class='fa fa-angle-double-left fa-fw fa-rotate-45'></span>&nbsp;Left</button>
@@ -99,84 +162,34 @@
 						</div>
 						<div class="col-xs-2 no-padding">
 							<div class="btn-group-vertical btn-group-lg full_width">
-								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeG.bind($data, '1')"><i class="fa fa-arrow-circle-up fa-fw"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeG.bind($data, '0.1')"><i class="fa fa-arrow-up fa-fw"></i>&nbsp;&nbsp;&nbsp;&nbsp; 0.1</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeG.bind($data, '0.05')"><i class="fa fa-angle-double-up fa-fw"></i>&nbsp;&nbsp;&nbsp; 0.05</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeG.bind($data, '0.01')"><i class="fa fa-angle-up fa-fw"></i>&nbsp;&nbsp; 0.01</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeG.bind($data, '-0.01')"><i class="fa fa-angle-down fa-fw"></i>&nbsp;&nbsp; 0.01</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeG.bind($data, '-0.05')"><i class="fa fa-angle-double-down fa-fw"></i>&nbsp;&nbsp; 0.05</a>
-								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeG.bind($data, '-0.1')"><i class="fa fa-arrow-down fa-fw"></i>&nbsp;&nbsp;&nbsp; 0.1</button>
-								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeG.bind($data, '-1')"><i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;&nbsp;&nbsp; 1.0</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeZ.bind($data, '1')"><i class="fa fa-arrow-circle-up fa-fw"></i>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeZ.bind($data, '0.1')"><i class="fa fa-arrow-up fa-fw"></i>&nbsp;&nbsp;&nbsp;&nbsp; 0.1</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeZ.bind($data, '0.05')"><i class="fa fa-angle-double-up fa-fw"></i>&nbsp;&nbsp;&nbsp; 0.05</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-primary" data-bind="enable: enable, click: sendRelativeZ.bind($data, '0.01')"><i class="fa fa-angle-up fa-fw"></i>&nbsp;&nbsp; 0.01</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeZ.bind($data, '-0.01')"><i class="fa fa-angle-down fa-fw"></i>&nbsp;&nbsp; 0.01</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeZ.bind($data, '-0.05')"><i class="fa fa-angle-double-down fa-fw"></i>&nbsp;&nbsp; 0.05</a>
+								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeZ.bind($data, '-0.1')"><i class="fa fa-arrow-down fa-fw"></i>&nbsp;&nbsp;&nbsp; 0.1</button>
+								<button type="button" class="btn btn-eight micro_step_button btn-danger" data-bind="enable: enable, click: sendRelativeZ.bind($data, '-1')"><i class="fa fa-arrow-circle-down fa-fw"></i>&nbsp;&nbsp;&nbsp; 1.0</button>
 							</div>
 						</div>
 					</div>
-					
-					<div id="settings_tab" class="printer">
-						<div class="row row-half-screen">
-							<div class="btn-group btn-group-lg">
-								<button type="button"  class="btn btn-default" data-bind="click: toggleMute"><i class="fa fa-bell fa-lg" data-bind="style: { color: isMute}"></i>&nbsp;Speaker</button>
-								<button type="button"  class="btn btn-default" data-bind="click: togglePower, enable: acceptsCommands"><i class="fa fa-power-off fa-lg" data-bind="style: { color: isPower}"></i>&nbsp;Power</button>
-							</div>	
-							<div class="btn-group btn-group-lg">
-								<button type="button"  class="btn btn-danger" data-bind="click: resetPrinter"><i class="fa fa-usb fa-lg"></i>&nbsp;Reset</button>
-							</div>
-						</div>
-						<div class="row row-half-screen">
-								<div class="btn-group-vertical">
-									<div class="btn-group">
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'X0 F6000')"><i class="fa fa-arrow-left fa-fw"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X-0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'X10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'X180 F6000')"><i class="fa fa-arrow-right fa-fw"></i></button></div> 
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">X</button></div>
-									</div> 
-									<div class="btn-group">
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Y0 F6000')"><i class="fa fa-arrow-down fa-fw fa-rotate-45"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y-0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y0.1 F6000')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y1 F6000')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Y10 F6000')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Y200 F6000')"><i class="fa fa-arrow-up fa-fw fa-rotate-45"></i></button></div> 
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Y</button></div>
-									</div>
-									<div class="btn-group">
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Z190 F300'"><i class="fa fa-arrow-up fa-fw"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z10 F300')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z1 F300')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-primary" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z0.1 F300')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-0.1 F300')">0.1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-1 F300')">1</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendRelativeG1.bind($data, 'Z-10 F300')">10</button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-danger" data-bind="enable: acceptsCommands, click: sendAbsoluteG1.bind($data, 'Z0 F300')"><i class="fa fa-arrow-down fa-fw"></i></button></div>
-										<div class="btn-group"><button type="button" class="btn btn-lg btn-default disabled">Z</button></div>
-									</div>
-							</div>
-						</div>
-						
-					</div>	
+					<div id="camera_panel" class="panel"">
+						<img data-bind="click: toggleLights" id="webcam">
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div id="disconnected_view" style="display:none;">
-			<div>Disconnected</div>
-			<button type="button" class="btn btn-lg btn-default" id="reconnect"><i class='fa fa-refresh fa-fw'></i> Reconnect</button>
+	<div id="disconnected_view" class="view">
+			<div id="disconnected_message">Disconnected</div>
+			<button type="button" class="btn btn-lg btn-default" id="reconnect"><i class='fa fa-refresh fa-fw'></i> Attempt to reconnect</button>
 	</div>
 	
-	<div id="loading_view">
+	<div id="loading_view" class="view">
 		Loading...
 	</div>
 	
-	<div id="camera_view"  style="display:none;">
+	<div id="camera_view" class="view">
 		<img id="webcam_alone">
 	</div>
 	
@@ -184,7 +197,10 @@
     
 	<script type="text/javascript">
 	var home = false;
-	var apikey = "{{ request.args.get('apikey') }}";
+	var BASE_URL = location.protocol + '//' + location.host + "/";
+	var API_KEY = "{{ request.args.get('apikey') }}";
+	var MOBILE_URL = "{{ mobile_url }}";
+	var has_switch = {{ has_switch }};
 	</script>
     
     {% include 'mobile_ui_javascripts.jinja2' %}

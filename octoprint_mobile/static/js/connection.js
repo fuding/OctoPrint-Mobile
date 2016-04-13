@@ -1,4 +1,36 @@
 var socket;
+var retry_count = 50;
+
+function connect(){
+	//disconnect()
+	socket = new SockJS(BASE_URL+"sockjs/");
+	
+	socket.timeoutInterval = 5400;
+	socket.maxReconnectAttempts = 10;
+	
+	socket.onopen = function() {
+		switchView("main");
+		getSwitchStatus();
+		retry_count = 10;
+	};
+	
+	socket.onmessage = function(e) {
+		if(currentView === "disconnected" || currentView === "loading" ){
+			switchView("main");
+		}
+		onReceivedData(e.data);
+	}; 
+	
+	socket.onclose = function(e) {
+		if (e.code == 1000 ) { //{type: "close", code: 1000, reason: "Normal closure", wasClean: true}
+			switchView("disconnected");
+			stop_camera(true); //stop camera imediatly
+		} else { //{type: "close", code: 1006, reason: "WebSocket connection broken", wasClean: false}
+			protocol_error({status: 99, responseText:"Server is offline."})
+		}
+	};
+
+}
 
 function disconnect(){
 	if (socket != undefined){
@@ -6,38 +38,24 @@ function disconnect(){
 	}
 }
 
-function connect(){
-	socket = new SockJS("/sockjs/");
-	
-	socket.timeoutInterval = 5400;
-	socket.maxReconnectAttempts = 10;
-	
-	socket.onopen = function() {
-		switchView("main");
-		switchTab("info_tab");		
-		getSwitchStatus();
-	};
-	
-	socket.onmessage = function(e) {
-		if(currentView === "disconnected_view" || currentView === "loading_view" ){
-			switchView("main");
-			switchTab("info_tab");
-		}
-		onReceivedData(e.data);
-	}; 
-	
-	socket.onclose = function() {
-	   switchView("disconnected_view");
-	   window.stop();
-	};
-	
+
+//conection commands
+function sendConnectionCommand(action){
+		$.ajax({
+			url:  BASE_URL+"api/connection",
+			headers: {"X-Api-Key": API_KEY},
+			method: "POST",
+			timeout: 10000,
+			contentType: "application/json",
+			data: JSON.stringify({"command": action})
+		});
 }
 
 //job commands
 function sendJobCommand(action){
 		$.ajax({
-			url:  "/api/job",
-			headers: {"X-Api-Key": apikey},
+			url:  BASE_URL+"api/job",
+			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
@@ -54,8 +72,8 @@ function sendCommand(data){
 			command = {"commands": data};
 		}
 		$.ajax({
-			url:  "/api/printer/command",
-			headers: {"X-Api-Key": apikey},
+			url:  BASE_URL+"api/printer/command",
+			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
@@ -67,12 +85,13 @@ function sendCommand(data){
 //switch plugin
 function sendSwitch(data, callback){
 		$.ajax({
-			url:  "/api/plugin/switch",
-			headers: {"X-Api-Key": apikey},
+			url:  BASE_URL+"api/plugin/switch",
+			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
-			data: JSON.stringify(data)
+			data: JSON.stringify(data),
+			
 		}).done(function(){if (typeof callback === "function") callback();});
 }
 
@@ -87,11 +106,28 @@ function sendSwitchCommand(command){
 //mobile plugin
 function checkHome(callback){
 		return $.ajax({
-			url:  "/api/plugin/mobile",
-			headers: {"X-Api-Key": apikey},
+			url:  BASE_URL+"api/"+MOBILE_URL,
+			headers: {"X-Api-Key": API_KEY},
 			method: "GET",
 			timeout: 10000,
-			contentType: "application/json"
+			contentType: "application/json",
+			error: protocol_error
 		}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
+//error handling
+function protocol_error(reason) {
+	$("#disconnected_message").text(reason.responseText);
+	switchView("disconnected");
+	if (socket != undefined){
+		socket.close();
+	}	
+	if (reason.status == 99){
+		if (retry_count > 0) {
+			retry_count = retry_count - 1;
+			setTimeout(function(){
+				connect();
+			}, 2000);
+		}
+	}
+}

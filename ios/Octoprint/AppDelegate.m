@@ -17,7 +17,7 @@
     NSString *buildNumber = [infoDict objectForKey:@"CFBundleVersion"];
     NSString* version =  [NSString stringWithFormat: @"%@.%@", appVersion, buildNumber];
 
-    NSString* useragent = [NSString stringWithFormat: @"Octoprint Viewer/%@", version];
+    NSString* useragent = [NSString stringWithFormat: @"Octoprint Mobile/%@", version];
     
     NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
 

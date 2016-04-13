@@ -1,62 +1,51 @@
 var currentView;
-var currentTab;
-
+var currentPanel;
 
 function switchView(view) {
 	if ( currentView != view ){
-		
+		if (view == "main") {
+			switchPanel("status");
+		}
+		$(".view").hide();
+		$("#"+view+"_view").show();
 		currentView = view;
-		
-		// hide all the views
-		$("#main").hide();
-		$("#camera_view").hide();
-		$("#disconnected_view").hide();
-		$("#loading_view").hide();
-
-		// show the desired view
-		$("#"+view).show();
 	}
 }
 
-function switchTab(tab){
+function switchPanel(panel){
+	if ( currentPanel != panel ){		
 
-	currentTab = tab;
-	stop_camera(); 
-	$("#info_tab_btn").removeClass("menu-tab-selected");
-	$("#camera_tab_btn").removeClass("menu-tab-selected");
-	$("#offset_tab_btn").removeClass("menu-tab-selected");
-	$("#print_tab_btn").removeClass("menu-tab-selected");
-	$("#settings_tab_btn").removeClass("menu-tab-selected");
-	
-	$("#info_tab").hide();
-	$("#camera_tab").hide();
-	$("#offset_tab").hide();
-	$("#printer_tab").hide();
-	$("#settings_tab").hide();
+		$(".sidebar-nav-selected").removeClass("sidebar-nav-selected");
+		$("#"+panel+"_btn").addClass("sidebar-nav-selected");
 
-	$("#"+tab+"_btn").addClass("menu-tab-selected");
-	$("#"+tab).show();
-	
+		$(".panel").hide();
+		$("#"+panel+"_panel").show();
+		
+		if (currentPanel == "camera") {
+			stop_camera(false); //stop streaming, but not imediate
+		} 
+		currentPanel = panel;
+	}
 }
 
 // tab menu buttons
-$("#info_tab_btn").click(function() {
-	switchTab("info_tab");
+$("#status_btn").click(function() {
+	switchPanel("status");
 });
 
-$("#camera_tab_btn").click(function() {
+$("#printer_btn").click(function() {
+	switchPanel("printer");
+});
+
+$("#movement_btn").click(function() {
+	switchPanel("movement");
+});
+
+$("#camera_btn").click(function() {
 	start_camera();
 });
 
-$("#offset_tab_btn").click(function() {
-	switchTab("offset_tab");
-	offset.reset();
-});
-
-$("#print_tab_btn").click(function() {
-	switchTab("printer_tab");
-});
-
-$("#settings_tab_btn").click(function() {
-	switchTab("settings_tab");
+$("#offset_btn").click(function() {
+	switchPanel("offset");
+	offset.update(); //update z and z offset values
 });

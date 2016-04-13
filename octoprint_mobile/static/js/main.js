@@ -1,10 +1,6 @@
 $(document).ready(function() {
-    applyBindings();
-	switchView("loading_view");
-	setup();
-});
-
-function setup(){
+	switchView("loading");
+	applyBindings();
 	checkHome(function(data){
 		home = data.home;
 		if ( home ) {
@@ -12,7 +8,6 @@ function setup(){
 			document.ontouchmove = function(event){
 			    return false;
 			};
-			
 			connect();
 		} else {
 			// allow scrolling
@@ -22,30 +17,58 @@ function setup(){
 			start_camera(true);
 		}
 	});
-}
+});
 
 $("#reconnect").click(function(){
 	connect();
 });
 
 function start_camera(alone){
-		d = new Date();
+	d = new Date();
 	if (alone) {
-		switchView("camera_view");
-		$("#webcam_alone").attr("src", "/webcam/?action=stream&"+d.getTime());
+		switchView("camera");
+		$("#webcam_alone").attr("src", BASE_URL+"webcam/?action=stream&"+d.getTime());
 	} else {
-		switchTab("camera_tab");
-		$("#webcam").attr("src", "/webcam/?action=stream&"+d.getTime());
+		switchPanel("camera");
+		if (clearCameraTimeout()) {
+			$("#webcam").attr("src", BASE_URL+"webcam/?action=stream&"+d.getTime());	
+		} 
 	}
 }
 
-function stop_camera(){
-	window.stop();
+var camera_timeout;
+
+function clearCameraTimeout(){
+	//console.log(camera_timeout);
+	if (camera_timeout == undefined) return true;
+	clearTimeout(camera_timeout);
+	camera_timeout = undefined;
+	//console.log("cleared");
+	return false;
+}
+
+function setCameraTimeout(){
+	//console.log("set");
+	camera_timeout = setTimeout(function(){
+		//console.log("triggered");
+		camera_timeout = undefined; 
+		window.stop();
+	}, 15000); //stop after X seconds
+}
+
+
+function stop_camera(imediate){
+	if (imediate) {
+		clearCameraTimeout();
+		window.stop();		
+	} else {
+		setCameraTimeout(); 
+	}
 }
 
 function reload(){
 	localStorage.clear();
-	switchView("loading_view");
+	switchView("loading");
 	location.reload();
 }
 
@@ -53,7 +76,7 @@ function reload(){
 function onForeground(){
 	checkHome(function(data){
 		var new_home = data.home;
-		if ( new_home === home) { //didn't change location
+		if ( new_home == home) { //didn't change location
 			if ( ! new_home ) { //we're away 
 				start_camera(true);
 			} else {
@@ -68,8 +91,6 @@ function onForeground(){
 
 //called by ios app 
 function onBackground(){
-   switchView("disconnected_view");
-   stop_camera();	
    disconnect();
 }
 
