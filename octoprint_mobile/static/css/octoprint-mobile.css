@@ -6,10 +6,16 @@
 body {
 	background-color: #223847;
 	font-family: 'Nunito', sans-serif;
+    background: url("../img/background.png");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: #22527B;
+    height: 100vh;
 }
 
-.container-fluid {
+.container-fluid, .container-fluid .row {
 	padding-left: 0px;
+    background: transparent;
 }
 
 .view {
@@ -27,7 +33,7 @@ body {
 	height: 20vh;
 	font-size: 8vw;
 	background-color: #22527B;
-	color: white;
+	color: #EEE;
 }
 
 .sidebar-nav span {
@@ -39,11 +45,6 @@ body {
 	color: #22527B;
 }
 
-
-#main_view {
-	background-color: #fefefe;
-}
-
 #status_panel {
 	text-align: center;
 	font-size: 8vh;
@@ -52,7 +53,11 @@ body {
 #movement_panel {
 	text-align: center;
 	padding: 2.5%;
-	background-color: #EEEEEE;
+	background-color: #EEE;
+}
+
+#camera_panel {
+    background: transparent;
 }
 
 #offset_panel {
@@ -109,11 +114,9 @@ body {
 }
 
 .no-padding {
-	padding-left: 0;
-	padding-right: 0;
-	padding-top: 0;
-	padding-bottom: 0;
 	padding: 0;
+    border: 0;
+    border: 0;
 }
 
 .button-row {
@@ -128,16 +131,22 @@ body {
 
 .row-half-screen {
 	height: 50vh;
-	margin: 0;
+	padding: 0;
+    border: 0;
+    border: 0;
 }
 
 .row-quarter-screen {
 	height: 25vh;
-	margin: 0;
+	padding: 0;
+    border: 0;
+    border: 0;
 }
 
 .row-no-margin {
-	margin: 0;
+	padding: 0;
+    border: 0;
+    border: 0;
 }
 
 .padded-row {

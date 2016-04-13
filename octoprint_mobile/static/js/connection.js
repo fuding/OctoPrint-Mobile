@@ -2,7 +2,7 @@ var socket;
 var retry_count = 50;
 
 function connect(){
-	//disconnect()
+	disconnect()
 	socket = new SockJS(BASE_URL+"sockjs/");
 	
 	socket.timeoutInterval = 5400;

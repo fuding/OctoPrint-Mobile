@@ -36,6 +36,15 @@ function start_camera(alone){
 	}
 }
 
+function stop_camera(imediate){
+	if (imediate) {
+		clearCameraTimeout();
+		window.stop();		
+	} else {
+		setCameraTimeout(); 
+	}
+}
+
 var camera_timeout;
 
 function clearCameraTimeout(){
@@ -53,18 +62,9 @@ function setCameraTimeout(){
 		//console.log("triggered");
 		camera_timeout = undefined; 
 		window.stop();
-	}, 15000); //stop after X seconds
+	}, 30000); //stop after X seconds
 }
 
-
-function stop_camera(imediate){
-	if (imediate) {
-		clearCameraTimeout();
-		window.stop();		
-	} else {
-		setCameraTimeout(); 
-	}
-}
 
 function reload(){
 	localStorage.clear();
@@ -91,7 +91,11 @@ function onForeground(){
 
 //called by ios app 
 function onBackground(){
-   disconnect();
+	if (home) {
+		disconnect();
+	} else {
+		stop_camera(true); //stop camera imediatly
+	}
 }
 
 
