@@ -32,7 +32,17 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 			if remote.split('.')[0] != '192':
 				return jsonify(home=False)
 		return jsonify(home=True)
-		
+	
+	def get_api_commands(self):
+		return dict(
+			deselect=[]
+		)
+	
+	def on_api_command(self, command, data):
+		self._logger.debug("on_api_command called: '{command}' / '{data}'".format(**locals()))
+		if command == "deselect":
+			self._printer.unselect_file()
+			
 
 __plugin_name__ = "Mobile UI"
 __plugin_implementation__ = MobileUIPlugin()

@@ -61,6 +61,10 @@ function ActionModel(){
 		sendCommand("G1 X97.5 Y95 F6000");
 	}
 	
+	self.loadLastFile = function(){
+		sendReloadFile(printer.previousFileToPrint());
+	}
+	
 	self.pausePrint = function(){
 		sendJobCommand("pause");
 	}
@@ -187,6 +191,8 @@ function PrinterModel(){
 	self.ready = ko.observable(false);
 
 	self.fileToPrint = ko.observable(null);
+	
+	self.previousFileToPrint = ko.observable(null);
 	
 	self.isFileLoaded = ko.computed(function(){
 		if ( self.fileToPrint() == null){

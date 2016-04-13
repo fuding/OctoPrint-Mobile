@@ -28,10 +28,10 @@
 
 					<div id="status_panel" class="panel"">
 						<p class="status_bar" data-bind="style: { background: printer.isPower }" id="printer_status"><span data-bind="text: printer.status"></span></p>
-						<p class="status_bar" id="extruder_temp"></p>
-						<p class="status_bar" id="bed_temp"></p>
 						<p class="status_bar" id="printing_time_elapsed" style="display:none;">00:00:00</p>
 						<p class="status_bar" id="printing_time_left" style="display:none;">00:00:00</p>
+						<p class="status_bar" id="extruder_temp"></p>
+						<p class="status_bar" id="bed_temp"></p>
 					</div>
 
 					<div id="printer_panel" class="panel">
@@ -48,8 +48,8 @@
 						</div>
 						<div class="printer_bar">
 								<div class="btn-group btn-spaced">
-									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(), click: fansOn"><i class="fa fa-asterisk fa-fw" ></i>&nbsp;Fans On</button>
-									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(),click: fansOff"><i class="fa fa-asterisk fa-fw" style="color:grey"></i>&nbsp;Fans Off</button>
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(), click: fansOn"><i class="fa fa-asterisk fa-fw"  style="color:#17b566"></i>&nbsp;Fan On</button>
+									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.ready() && printer.power(),click: fansOff"><i class="fa fa-asterisk fa-fw" style="color:#ed2b36"></i>&nbsp;Fan Off</button>
 								</div>
 								<div class="btn-group btn-spaced">
 									<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.acceptsCommands, click: coolOff"><i class="fa fa-fire-extinguisher fa-fw"></i>&nbsp;Cool Off</button>
@@ -57,7 +57,9 @@
 								</div>
 						</div>
 						<div class="printer_bar">
-							<span class="curent_file" data-bind="text: printer.fileToPrint"><span>
+							<button type="button" class="btn btn-lg btn-primary" data-bind="enable:printer.acceptsCommands, visible: !printer.isFileLoaded() && printer.previousFileToPrint() != null, click: loadLastFile"><i class="fa fa-file-text fa-fw"></i>&nbsp;Reload last file</button>
+							<span class="curent_file" data-bind="text: printer.fileToPrint, click:deselectFile"><span>
+								
 						</div>
 						<div class="printer_bar">
 							<div class="btn-group btn-spaced">

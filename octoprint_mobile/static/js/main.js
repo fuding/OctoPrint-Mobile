@@ -1,6 +1,8 @@
 $(document).ready(function() {
 	switchView("loading");
 	applyBindings();
+	printer.previousFileToPrint(localStorage.getItem("previousFileToPrint"));
+	
 	checkHome(function(data){
 		home = data.home;
 		if ( home ) {
@@ -63,14 +65,7 @@ function setCameraTimeout(){
 		camera_timeout = undefined; 
 		window.stop();
 	}, 30000); //stop after X seconds
-}
-
-
-function reload(){
-	localStorage.clear();
-	switchView("loading");
-	location.reload();
-}
+} 
 
 //called by ios app 
 function onForeground(){
@@ -84,7 +79,7 @@ function onForeground(){
 			}
 		} else { //we moved in or out the house... reload the app
 			home = new_home;		
-			reload();
+			location.reload();
 		}
 	});
 }

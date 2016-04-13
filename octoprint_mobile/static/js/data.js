@@ -27,7 +27,13 @@ function onReceivedData(data){
 function onCurrentData(current){
 	// uppdate printer status
 	//console.log(current);
-	printer.fileToPrint(current.job.file.name)
+	
+	if (current.job.file.name == null && printer.fileToPrint() != null) {
+		printer.previousFileToPrint(printer.fileToPrint());
+		localStorage.setItem("previousFileToPrint", printer.fileToPrint());
+	}
+
+	printer.fileToPrint(current.job.file.name);
 
 	//whether the printer is currently connected and responding
 	printer.operational(current.state.flags.operational);

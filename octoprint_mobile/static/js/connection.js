@@ -51,6 +51,22 @@ function sendConnectionCommand(action){
 		});
 }
 
+//files commands
+function sendReloadFile(fn){
+		$.ajax({
+			url:  BASE_URL+"api/files/local/"+fn,
+			headers: {"X-Api-Key": API_KEY},
+			method: "POST",
+			timeout: 10000,
+			contentType: "application/json",
+			data: JSON.stringify({"command": "select"})
+		});
+}
+
+function deselectFile(){
+	sendMobileCommand({"command": "deselect"});
+}
+
 //job commands
 function sendJobCommand(action){
 		$.ajax({
@@ -113,6 +129,18 @@ function checkHome(callback){
 			contentType: "application/json",
 			error: protocol_error
 		}).done(function(data){if (typeof callback === "function") callback(data);});
+}
+
+function sendMobileCommand(data, callback){
+		$.ajax({
+			url:  BASE_URL+"api/"+MOBILE_URL,
+			headers: {"X-Api-Key": API_KEY},
+			method: "POST",
+			timeout: 10000,
+			contentType: "application/json",
+			data: JSON.stringify(data),
+			
+		}).done(function(){if (typeof callback === "function") callback();});
 }
 
 //error handling
