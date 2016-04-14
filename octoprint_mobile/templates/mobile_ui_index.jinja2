@@ -19,8 +19,8 @@
 					<ul class="nav nav-sidebar">
 						<li><a class="sidebar-nav" id="status_btn"><span class="fa fa-info-circle"></span></a></li>
 						<li><a class="sidebar-nav" id="printer_btn"><span class="fa fa-print"></span></a></li>
-						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-arrows" data-bind="style: { color: power() ? '' : '#888' }"></span></a></li>
-						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-sliders" data-bind="style: { color: power() ? '' : '#888' }"></span></a></li>
+						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-arrows" data-bind="style: { color: acceptsCommands() ? '' : '#888' }"></span></a></li>
+						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-sliders" data-bind="style: { color: acceptsCommands() ? '' : '#888' }"></span></a></li>
 						<li><a class="sidebar-nav" id="camera_btn"><span class="fa fa-camera"></span></a></li>
 					</ul>
 				</div>
@@ -38,11 +38,9 @@
 						<div class="printer_bar">
 							<div class="btn-group btn-group-lg">
 								<button type="button"  class="btn btn-default" data-bind="click: printer.toggleMute, enable: has_switch"><i class="fa fa-bell fa-lg" data-bind="style: { color: printer.isMute}"></i>&nbsp;Speaker</button>
-								<button type="button"  class="btn btn-default" data-bind="click: printer.togglePower, disable: ! has_switch || ( printer.printing() || printer.paused())"><i class="fa fa-power-off fa-lg" data-bind="style: { color: printer.isPower}"></i>&nbsp;Power</button>
-							</div>	
-							<div class="btn-group btn-group-lg">
 								<button type="button"  class="btn " data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><i class="fa fa-usb fa-lg"></i><span data-bind="text: (printer.ready() ? '&nbsp;Disconnect' : '&nbsp;Connect')"></span></button>
 								<button type="button"  class="btn btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch"><i class="fa fa-refresh fa-lg"></i>&nbsp;Reset</button>
+								<button type="button"  class="btn btn-default" data-bind="click: printer.togglePower, disable: ! has_switch || ( printer.printing() || printer.paused())"><i class="fa fa-power-off fa-lg" data-bind="style: { color: printer.isPower}"></i>&nbsp;Power</button>
 							</div>
 							
 						</div>

@@ -38,13 +38,13 @@ $("#printer_btn").click(function() {
 });
 
 $("#movement_btn").click(function() {
-	if (printer.power()){
+	if (printer.acceptsCommands()){
 		switchPanel("movement");
 	}
 });
 
 $("#offset_btn").click(function() {
-	if (printer.power()){
+	if (printer.acceptsCommands()){
 		switchPanel("offset");
 		offset.update(); //update z and z offset values
 	}
