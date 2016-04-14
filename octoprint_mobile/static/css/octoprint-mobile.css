@@ -82,7 +82,7 @@ body {
 	line-height: 33.34vh;
 	margin-bottom: 0;
 	color: white;;
-	background-color: #d6c4ac;
+	background-color: #17b566;
 	font-size: 10vh !important;
 }
 
@@ -129,19 +129,29 @@ body {
 	border-radius: 0;
 }
 
-.row-half-screen {
-	height: 50vh;
+
+.movement-row-1 {
+	height: 20vh;
 	padding: 0;
     border: 0;
     border: 0;
 }
 
-.row-quarter-screen {
-	height: 25vh;
+.movement-row-2 {
+	height: 35vh;
 	padding: 0;
     border: 0;
     border: 0;
 }
+
+.movement-row-3 {
+	height: 45vh;
+	padding: 0;
+    border: 0;
+    border: 0;
+}
+
+
 
 .row-no-margin {
 	padding: 0;
@@ -163,11 +173,11 @@ body {
 }
 
 #extruder_temp {
-	background-color: #3969BA;
+	background-color: #22527B;
 }
 
 #bed_temp {
-	background-color: #223847;
+	background-color: #272727;
 }
 
 #printer_status {
@@ -285,3 +295,6 @@ body {
 	line-height: 6vh;
 }
 
+.btn-link span, .btn-link i {
+    color:green;
+}

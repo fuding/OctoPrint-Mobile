@@ -38,14 +38,18 @@ $("#printer_btn").click(function() {
 });
 
 $("#movement_btn").click(function() {
-	switchPanel("movement");
+	if (printer.power()){
+		switchPanel("movement");
+	}
+});
+
+$("#offset_btn").click(function() {
+	if (printer.power()){
+		switchPanel("offset");
+		offset.update(); //update z and z offset values
+	}
 });
 
 $("#camera_btn").click(function() {
 	start_camera();
-});
-
-$("#offset_btn").click(function() {
-	switchPanel("offset");
-	offset.update(); //update z and z offset values
 });

@@ -10,8 +10,8 @@ function connect(){
 	
 	socket.onopen = function() {
 		switchView("main");
-		getSwitchStatus();
-		retry_count = 10;
+		sendSwitchCommand("status");
+		retry_count = 50;
 	};
 	
 	socket.onmessage = function(e) {
@@ -40,7 +40,7 @@ function disconnect(){
 
 
 //conection commands
-function sendConnectionCommand(action){
+function sendConnectionCommand(action, callback){
 		$.ajax({
 			url:  BASE_URL+"api/connection",
 			headers: {"X-Api-Key": API_KEY},
@@ -48,11 +48,11 @@ function sendConnectionCommand(action){
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify({"command": action})
-		});
+		}).done(function(){if (typeof callback === "function") callback();});
 }
 
 //files commands
-function sendReloadFile(fn){
+function sendReloadFile(fn, callback){
 		$.ajax({
 			url:  BASE_URL+"api/files/local/"+fn,
 			headers: {"X-Api-Key": API_KEY},
@@ -60,15 +60,11 @@ function sendReloadFile(fn){
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify({"command": "select"})
-		});
-}
-
-function deselectFile(){
-	sendMobileCommand({"command": "deselect"});
+		}).done(function(){if (typeof callback === "function") callback();});
 }
 
 //job commands
-function sendJobCommand(action){
+function sendJobCommand(action, callback){
 		$.ajax({
 			url:  BASE_URL+"api/job",
 			headers: {"X-Api-Key": API_KEY},
@@ -76,11 +72,11 @@ function sendJobCommand(action){
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify({"command": action})
-		});
+		}).done(function(){if (typeof callback === "function") callback();});
 }
 
 //G or M codes
-function sendCommand(data){
+function sendCommand(data, callback){
 	if ( printer.acceptsCommands() ) {
 		if (typeof data  === "string") {
 			command = {"command": data};
@@ -94,12 +90,13 @@ function sendCommand(data){
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify(command)
-		});
+		}).done(function(){if (typeof callback === "function") callback();});
 	}
 }
 
 //switch plugin
 function sendSwitch(data, callback){
+	if (has_switch) {
 		$.ajax({
 			url:  BASE_URL+"api/plugin/switch",
 			headers: {"X-Api-Key": API_KEY},
@@ -109,14 +106,15 @@ function sendSwitch(data, callback){
 			data: JSON.stringify(data),
 			
 		}).done(function(){if (typeof callback === "function") callback();});
+	}
 }
 
-function getSwitchStatus(){
-	sendSwitch({"command":"status"});
-}
-
-function sendSwitchCommand(command){
-	sendSwitch(command, getSwitchStatus);
+function sendSwitchCommand(command, status){
+	if (status != undefined){
+		sendSwitch({"command":command, "status":status}, function(){sendSwitchCommand("status");});
+	} else {
+		sendSwitch({"command":command});
+	}
 }
 
 //mobile plugin
@@ -131,14 +129,14 @@ function checkHome(callback){
 		}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
-function sendMobileCommand(data, callback){
+function sendMobileCommand(action, callback){
 		$.ajax({
 			url:  BASE_URL+"api/"+MOBILE_URL,
 			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
-			data: JSON.stringify(data),
+			data: JSON.stringify({"command": action}),
 			
 		}).done(function(){if (typeof callback === "function") callback();});
 }

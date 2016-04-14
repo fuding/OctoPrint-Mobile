@@ -16,23 +16,7 @@ function ActionModel(){
 			return false;
 		}
 	});
-	
-	self.homeAll = function(){
-		sendCommand("G28");
-	}
-	
-	self.autoLevel = function(){
-		sendCommand("G29");
-	}
-	
-	self.loadFilament = function(){
-		sendCommand(["M80","G92 E0","G1 E680 F3000","G92 E0","M300 @beep"]);
-	}
-	
-	self.unloadFilament = function(){
-		sendCommand(["M80","G92 E0","G1 E-680 F3000","G92 E0","M300 @beep"]);
-	}
-	
+		
 	self.startPrint = function(){
 		bootbox.confirm({ closeButton: false, message: "Start printing ?", callback: function(result) {
 		  if (result) {
@@ -41,26 +25,10 @@ function ActionModel(){
 		}});
 	}
 
-	self.coolOff = function(){
-		sendCommand(["M140 S0", "M104 S0", "M300 @beep"]);
+	self.deselectFile = function(){
+		sendMobileCommand("deselect");
 	}
-
-	self.fansOn = function(){
-		sendCommand("M106 S255");
-	}
-
-	self.fansOff = function(){
-		sendCommand("M106 S0");
-	}
-
-	self.motorsOff = function(){
-		sendCommand("M18");
-	}
-	
-	self.gotoCenter = function(){
-		sendCommand("G1 X97.5 Y95 F6000");
-	}
-	
+		
 	self.loadLastFile = function(){
 		sendReloadFile(printer.previousFileToPrint());
 	}
@@ -101,7 +69,6 @@ function OffsetModel() {
 			return false;
 		}
 	});
-	
 	
 	self.prepared = ko.observable(false);
 
@@ -166,14 +133,14 @@ function OffsetModel() {
 	self.sendRelativeZ = function(z){
 		sendCommand(["G91", "G1 Z"+z, "M114", "G90"]);
 	}
-
+	
 }
 
 
 function PrinterModel(){
 	var self = this;
 
-	self.power = ko.observable(false);
+	self.power = ko.observable(! has_switch);
 	self.lights = ko.observable(false);
 	self.mute = ko.observable(false);
 	
@@ -227,6 +194,10 @@ function PrinterModel(){
 			$("#printing_time_elapsed").show()
 		}
 		if (value == "Offline" || value == "Error") {
+			$("#printing_time_left").hide()
+			$("#printing_time_elapsed").hide()
+			$("#printing_time_left").text("");
+			$("#printing_time_elapsed").text("");
 			$(".status_bar").css("height", "33.34vh");
 			$(".status_bar").css("line-height", "33.34vh");
 			$("#bed_temp").html("&nbsp;");
@@ -239,7 +210,7 @@ function PrinterModel(){
 			$("#printing_time_elapsed").text("");
 			$(".status_bar").css("height", "33.34vh");
 			$(".status_bar").css("line-height", "33.34vh");
-			self.isPower( self.power() ? color_on : color_off );
+			if (has_switch) self.isPower( self.power() ? color_on : color_off );
 		}
 	}
 
@@ -249,23 +220,24 @@ function PrinterModel(){
 	self.isMute = ko.observable();
 
 	self.toggleLights = function(){
-		sendSwitchCommand({"command":"lights","status":!self.lights()});
+		sendSwitchCommand("lights",!self.lights());
 	}
 
 	self.togglePower = function(){
-		sendSwitchCommand({"command":"power","status":!self.power()});
+		sendSwitchCommand("power",!self.power());
 	}
 
 	self.resetPrinter = function(){
 		bootbox.confirm({closeButton: false, message: "Reset printer board?", callback: function(result) {
 		  if (result) {
-			sendSwitch({"command":"reset"});
+			sendSwitchCommand("reset");
+			switchPanel("status");
 		  }
 		}});
 	}
 
 	self.toggleMute = function (){
-		sendSwitchCommand({"command":"mute","status":!self.mute()});
+		sendSwitchCommand("mute",!self.mute());
 	}
 	
 	self.printerConnect = function(){
@@ -295,6 +267,7 @@ function applyBindings(){
 	ko.applyBindings(action, document.getElementById("printer_panel"));
 	ko.applyBindings(action, document.getElementById("movement_panel"));
 	ko.applyBindings(printer, document.getElementById("camera_panel"));
+	ko.applyBindings(printer, document.getElementById("sidebar"));
 	ko.applyBindings(offset, document.getElementById("offset_panel"));
 }
 

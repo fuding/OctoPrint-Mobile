@@ -8,8 +8,8 @@ function onReceivedData(data){
 	
 	if(typeof(data.current) !== "undefined"){
 		onCurrentData(data.current);
-	}
-		
+	} 
+	
 	if (typeof(data.history) !== "undefined"){
 		onCurrentData(data.history);
 	}
@@ -22,6 +22,11 @@ function onReceivedData(data){
 		onPluginData(data.plugin.plugin, data.plugin.data);
 	}
 	
+}
+
+function onHistoryData(history){
+ 	//console.log(history);
+ 	printer.setStatus(history.state.text);
 }
 
 function onCurrentData(current){
@@ -82,8 +87,9 @@ function onCurrentData(current){
 		$("#printing_time_elapsed").text(formatSeconds(current.progress.printTime));
 		
 		// update print progress bar
-		printer.isPower("linear-gradient(90deg, #65C665 "+parseInt(current.progress.completion)+"%, #ed2b36 0%)");
+		printer.isPower("linear-gradient(90deg, #17b566 "+parseInt(current.progress.completion)+"%, #ed2b36 0%)");
 	}
+	
 	printer.setStatus(current.state.text);
 }
 
