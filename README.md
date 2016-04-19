@@ -7,7 +7,7 @@ The iOS app is need only to force landscape, load the API key. Bonus feature: sh
 As long as octoprint is avalable over the internet, the UI changes to full screen webcam for pure monitoring. 
 
 
-![screenshot](octoprint.gif)
+![screenshot](octoprint_v2.gif)
 
 
 ###Setup
