@@ -5,6 +5,7 @@ import octoprint.plugin
 import logging
 import logging.handlers
 
+import ConfigParser, hashlib, os
 from flask import make_response, render_template, jsonify, url_for
 
 class MobileUIPlugin(octoprint.plugin.UiPlugin,
@@ -16,7 +17,9 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 		self._logger.info("Mobile UI for Octoprint Viewer available")
 
 	def will_handle_ui(self, request):
-		return request.user_agent.string.startswith("Octoprint Mobile")
+		#to allow mobile UI on any mobile device uncomment the second half of the return condition
+		# and use http(s)://__youip__?apikey=99999999999999
+		return request.user_agent.string.startswith("Octoprint Mobile") # or request.user_agent.platform in ("ipad", "iphone", "android")
 		
 	def on_ui_render(self, now, request, render_kwargs):		
 		mobile_url="plugin/%s"%self._identifier
@@ -35,14 +38,36 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 	
 	def get_api_commands(self):
 		return dict(
-			deselect=[]
+			deselect=[],
+			gcodes=['id']
 		)
 	
 	def on_api_command(self, command, data):
 		self._logger.debug("on_api_command called: '{command}' / '{data}'".format(**locals()))
 		if command == "deselect":
 			self._printer.unselect_file()
-			
+		elif command == "gcodes":
+			id = data.get('id') or "?"
+			gcodes = ConfigParser.ConfigParser()
+			inifile = os.path.join(self._basefolder, "gcodes.ini")
+			if os.path.isfile(os.path.join(self.get_plugin_data_folder(), "gcodes.ini")):
+				inifile = os.path.join(self.get_plugin_data_folder(), "gcodes.ini")
+				
+			gcodes.read(inifile)
+			md5 = hashlib.md5(open(inifile, 'rb').read()).hexdigest()
+			#self._logger.debug("gcode version: remote ["  +id +"] vs local ["+md5+"] ...")
+			if id == md5:
+				return jsonify(update=False)
+			else:
+				self._logger.info("new gcode version: remote ["  +id +"] vs local [" + md5 + "] ...")
+				retval = {'update':True, 'id':md5}
+				for section in gcodes.sections():
+					view = gcodes.items(section)
+					commands = {}
+					for key,value in view:
+						commands.update({key: value})
+					retval.update({section: commands})
+				return jsonify(retval)
 
 __plugin_name__ = "Mobile UI"
 __plugin_implementation__ = MobileUIPlugin()

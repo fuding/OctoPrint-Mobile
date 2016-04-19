@@ -28,6 +28,26 @@ function switchPanel(panel){
 	}
 }
 
+function showProgress(){
+	$(".status_bar").css("height", "20vh");
+	$(".status_bar").css("line-height", "20vh");
+	$("#printing_time_left").show()
+	$("#printing_time_elapsed").show()
+}
+
+function hideProgress(){
+	$("#printing_time_left").hide()
+	$("#printing_time_elapsed").hide()
+	$("#printing_time_left").text("");
+	$("#printing_time_elapsed").text("");
+	$(".status_bar").css("height", "33.34vh");
+	$(".status_bar").css("line-height", "33.34vh");
+	printer.bed_actual(0);
+	printer.extruder_actual(0);
+	printer.progress(0);
+	if (currentPanel == 'movement' || currentPanel == 'offset') switchPanel("printer");
+}
+
 // tab menu buttons
 $("#status_btn").click(function() {
 	switchPanel("status");

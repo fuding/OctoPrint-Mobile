@@ -50,9 +50,9 @@ body {
 	font-size: 8vh;
 }
 
-#movement_panel {
+#printer_panel, #movement_panel {
 	text-align: center;
-	padding: 2.5%;
+	padding: 1%;
 	background-color: #EEE;
 }
 
@@ -84,15 +84,6 @@ body {
 	color: white;;
 	background-color: #17b566;
 	font-size: 10vh !important;
-}
-
-.printer_bar {
-	width: 100%;
-	margin-bottom: 0;
-	height: 25vh;;
-	line-height: 25vh;
-	text-align: center;
-	background-color: #EEEEEE;
 }
 
 .offset_bar {
@@ -129,35 +120,36 @@ body {
 	border-radius: 0;
 }
 
+.printer_row_1, .printer_row_3, .printer_row_5 {
+	height: 17vh;
+}
+
+.printer_row_2 {
+	height: 35vh;
+}
+
+.printer_row_4 {
+	height: 15vh;
+}
 
 .movement-row-1 {
-	height: 20vh;
-	padding: 0;
-    border: 0;
-    border: 0;
+	height: 15vh;
 }
 
 .movement-row-2 {
-	height: 35vh;
-	padding: 0;
-    border: 0;
-    border: 0;
+	height: 25vh;
 }
 
 .movement-row-3 {
+	height: 15vh;
+	padding-top: 15px;
+}
+
+.movement-row-4 {
 	height: 45vh;
-	padding: 0;
-    border: 0;
-    border: 0;
+	padding-top: 15px;
 }
 
-
-
-.row-no-margin {
-	padding: 0;
-    border: 0;
-    border: 0;
-}
 
 .padded-row {
 	padding-left: 6%;
@@ -182,6 +174,12 @@ body {
 
 #printer_status {
 	font-size: 15vh;
+}
+
+#printing_time_elapsed {
+	border-top: #555;
+    border-top-style: solid;
+    border-top-width: 1px;
 }
 
 #printer_icons {
@@ -234,8 +232,17 @@ body {
 	height: 13vh;
 	font-size: 7vw;
 	border-radius: 0 !important;
-	padding: 0 !important;
 	margin: 0;
+    padding-left: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
+    padding-right: 9px !important;
+	text-align: right;
+	
+}
+
+.micro_step_button .fa {
+	margin-left: 10px;
 }
 
 .curent_file {
@@ -297,4 +304,32 @@ body {
 
 .btn-link span, .btn-link i {
     color:green;
+}
+
+.slider.slider-horizontal {
+	width: 95%;
+	margin-left: 10%;
+}
+
+.slider-row {
+	height: 17.5vh;
+}
+
+.slider-tick-label {
+	width: 54.5714px !important;
+	margin-left: -27.2857px !important;
+}
+
+#port {
+	text-align: right;
+	font-size: 15px;
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	line-height: 10px;
+}
+
+.btn-group-justified {
+	width: 90%;
+    margin-left: 5%;
 }

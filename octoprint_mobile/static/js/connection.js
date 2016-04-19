@@ -1,8 +1,11 @@
 var socket;
 var retry_count = 50;
+var gcodes_offset;
+var gcodes_action;
 
 function connect(){
 	disconnect()
+	checkGcodes();
 	socket = new SockJS(BASE_URL+"sockjs/");
 	
 	socket.timeoutInterval = 5400;
@@ -40,43 +43,70 @@ function disconnect(){
 
 
 //conection commands
-function sendConnectionCommand(action, callback){
+function sendConnectionCommand(command){
 		$.ajax({
 			url:  BASE_URL+"api/connection",
 			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
-			data: JSON.stringify({"command": action})
-		}).done(function(){if (typeof callback === "function") callback();});
+			data: JSON.stringify({"command": command})
+		});
+}
+
+function getConnectionStatus(callback){
+		$.ajax({
+			url:  BASE_URL+"api/connection",
+			headers: {"X-Api-Key": API_KEY},
+			method: "GET",
+			timeout: 10000,
+			contentType: "application/json"
+		}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
 //files commands
-function sendReloadFile(fn, callback){
+function sendLoadFile(filename){
 		$.ajax({
-			url:  BASE_URL+"api/files/local/"+fn,
+			url:  BASE_URL+"api/files/local/"+filename,
 			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify({"command": "select"})
-		}).done(function(){if (typeof callback === "function") callback();});
+		});
+}
+
+function getGcodeFiles(callback){
+		$.ajax({
+			url:  BASE_URL+"api/files",
+			headers: {"X-Api-Key": API_KEY},
+			method: "GET",
+			timeout: 10000,
+			contentType: "application/json",
+		}).done(function(data){console.log(callback);if (typeof callback === "function") callback(data);});
 }
 
 //job commands
-function sendJobCommand(action, callback){
+function sendJobCommand(command){
 		$.ajax({
 			url:  BASE_URL+"api/job",
 			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
-			data: JSON.stringify({"command": action})
-		}).done(function(){if (typeof callback === "function") callback();});
+			data: JSON.stringify({"command": command})
+		});
+}
+
+function sendCommandByName(name){
+	var gcode = gcodes_action[name];
+	if (gcode != undefined) {
+		sendCommand(gcode.split(","));
+	}
 }
 
 //G or M codes
-function sendCommand(data, callback){
+function sendCommand(data){
 	if ( printer.acceptsCommands() ) {
 		if (typeof data  === "string") {
 			command = {"command": data};
@@ -90,7 +120,7 @@ function sendCommand(data, callback){
 			timeout: 10000,
 			contentType: "application/json",
 			data: JSON.stringify(command)
-		}).done(function(){if (typeof callback === "function") callback();});
+		});
 	}
 }
 
@@ -119,26 +149,48 @@ function sendSwitchCommand(command, status){
 
 //mobile plugin
 function checkHome(callback){
-		return $.ajax({
-			url:  BASE_URL+"api/"+MOBILE_URL,
-			headers: {"X-Api-Key": API_KEY},
-			method: "GET",
-			timeout: 10000,
-			contentType: "application/json",
-			error: protocol_error
-		}).done(function(data){if (typeof callback === "function") callback(data);});
+	$.ajax({
+		url:  BASE_URL+"api/"+MOBILE_URL,
+		headers: {"X-Api-Key": API_KEY},
+		method: "GET",
+		timeout: 10000,
+		contentType: "application/json",
+		error: protocol_error
+	}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
-function sendMobileCommand(action, callback){
+function checkGcodes(){
+	sendMobile({"command":"gcodes", "id":localStorage.getItem("gcodes.mobile.id")}, function(data){
+		if (typeof(data) === "string") {
+			data = JSON.parse(data);
+		}		
+		if (data.update){
+			localStorage.setItem("gcodes.mobile.id", data.id);
+			gcodes_offset = data.offset;
+			gcodes_action = data.action;
+			localStorage.setItem("gcodes.mobile.offset", JSON.stringify(data.offset));
+			localStorage.setItem("gcodes.mobile.action", JSON.stringify(data.action));
+		} else {
+			gcodes_offset = JSON.parse(localStorage.getItem("gcodes.mobile.offset"));
+			gcodes_action = JSON.parse(localStorage.getItem("gcodes.mobile.action"));
+		}
+	});
+}
+
+function sendMobileCommand(command){
+	sendMobile({"command": command});
+}
+
+function sendMobile(data, callback){
 		$.ajax({
 			url:  BASE_URL+"api/"+MOBILE_URL,
 			headers: {"X-Api-Key": API_KEY},
 			method: "POST",
 			timeout: 10000,
 			contentType: "application/json",
-			data: JSON.stringify({"command": action}),
+			data: JSON.stringify(data),
 			
-		}).done(function(){if (typeof callback === "function") callback();});
+		}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
 //error handling

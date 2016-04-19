@@ -1,7 +1,6 @@
 $(document).ready(function() {
 	switchView("loading");
 	applyBindings();
-	printer.previousFileToPrint(localStorage.getItem("previousFileToPrint"));
 	
 	checkHome(function(data){
 		home = data.home;
@@ -10,6 +9,26 @@ $(document).ready(function() {
 			document.ontouchmove = function(event){
 			    return false;
 			};
+			//part of the hack to enable/disable sliders. must be called after biding 
+			// and will trigger the "subscribe" function. Only needs to happen once.
+			$.notifyDefaults({
+				type: 'danger',
+				allow_dismiss: true,
+				delay: 10000,
+				placement: {
+						from: "bottom",
+						align: "center"
+					},
+			});
+
+			getConnectionStatus(function(data) {
+				printer.status(data.current.state);
+				printer.port(data.current.port);
+			 });
+			printer.power(! has_switch);
+			printer.acceptsCommands.extend({ notify: 'dirty' }); //set back to notify on change only			
+			printer.alwaysAcceptsCommands.extend({ notify: 'dirty' });
+			
 			connect();
 		} else {
 			// allow scrolling

@@ -1,17 +1,20 @@
 var color_on = "#17b566"; 
 var color_off = "#ed2b36"; 
 
+var re114 = /X:([+-]?[0-9.]+) Y:([+-]?[0-9.]+) Z:([+-]?[0-9.]+) E:([+-]?[0-9.]+)/;
+var re851 = /echo:Z Offset : ([-.\d]*)/;
+
 function onReceivedData(data){
 	if (typeof(data) === "string") {
 		data = JSON.parse(data);
 	}
-	
+	//console.log(data);
 	if(typeof(data.current) !== "undefined"){
 		onCurrentData(data.current);
 	} 
 	
 	if (typeof(data.history) !== "undefined"){
-		onCurrentData(data.history);
+		onHistoryData(data.history);
 	}
 	
 	if(typeof(data.event) !== "undefined"){
@@ -26,107 +29,100 @@ function onReceivedData(data){
 
 function onHistoryData(history){
  	//console.log(history);
- 	printer.setStatus(history.state.text);
+ 	printer.status(history.state.text);
+	updateFlasgs(history.state.flags);
+	//printer.status(payload.state_string);
+	if (history.state.text == "Printing") {
+		showProgress();		
+	} else {
+		hideProgress();
+	}
 }
 
 function onCurrentData(current){
 	// uppdate printer status
-	//console.log(current);
-	
-	if (current.job.file.name == null && printer.fileToPrint() != null) {
-		printer.previousFileToPrint(printer.fileToPrint());
-		localStorage.setItem("previousFileToPrint", printer.fileToPrint());
-	}
-
+	//console.log(current);	
 	printer.fileToPrint(current.job.file.name);
 
-	//whether the printer is currently connected and responding
-	printer.operational(current.state.flags.operational);
-	//whether the printer is currently printing>
-	printer.printing(current.state.flags.printing);
-	//whether the printer is currently disconnected and/or in an error state	
-	printer.closedOrError(current.state.flags.closedOrError);
-	//whether the printer is currently in an error state
-	printer.error(current.state.flags.error);
-	//whether the printer is currently paused
-	printer.paused(current.state.flags.paused);
-	//whether the printer is operational and ready for jobs
-	printer.ready(current.state.flags.ready);
-	
+	updateFlasgs(current.state.flags);
 	onMessageData(current.messages);
 	
 	if(typeof(current.temps[0]) !== "undefined"){
-		// update printer temps
-		var bedTemp;
-		if(typeof(current.temps[0].bed) !== "undefined" && current.temps[0].bed.actual !== null){
-			if(current.temps[0].bed.target === 0){
-				bedTemp = "<i class='fa fa-bed fa-fw'></i> "+current.temps[0].bed.actual + "ºC";
-			}else {
-				bedTemp = "<i class='fa fa-bed fa-fw'></i> "+current.temps[0].bed.actual + "ºC / " + current.temps[0].bed.target + "ºC";
-			}
-			$("#bed_temp").html(bedTemp);
-		}
-		var e0Temp;
-		if(typeof(current.temps[0].tool0) !== "undefined"){
-			if(current.temps[0].tool0.target === 0){
-				e0Temp = "<i class='fa fa-fire fa-fw'></i> "+current.temps[0].tool0.actual + "ºC";
-			}else {
-				e0Temp = "<i class='fa fa-fire fa-fw'></i> "+current.temps[0].tool0.actual + "ºC / " + current.temps[0].tool0.target + "ºC";
-			}
-			$("#extruder_temp").html(e0Temp);
-		} 
+		printer.bed_actual(current.temps[0].bed.actual);
+		printer.bed_target(current.temps[0].bed.target);
+		printer.extruder_actual(current.temps[0].tool0.actual);
+		printer.extruder_target(current.temps[0].tool0.target);
 	} 
 		
 	if(current.state.flags.printing){
-		// update print time info
-		if(current.progress.printTimeLeft === null){
-			$("#printing_time_left").text("Calculating...");
-		}else {
-			$("#printing_time_left").text(formatSeconds(current.progress.printTimeLeft));
+		printer.progress(parseInt(current.progress.completion));
+		//console.log(formatSeconds(current.progress.printTimeLeft));
+		if(current.progress.printTimeLeft != null){
+			
+			printer.time_left(formatSeconds(current.progress.printTimeLeft));
 		}
-		$("#printing_time_elapsed").text(formatSeconds(current.progress.printTime));
-		
-		// update print progress bar
-		printer.isPower("linear-gradient(90deg, #17b566 "+parseInt(current.progress.completion)+"%, #ed2b36 0%)");
+		printer.time_elapsed(formatSeconds(current.progress.printTime));
 	}
 	
-	printer.setStatus(current.state.text);
+	printer.status(current.state.text);
+}
+
+function updateFlasgs(flags){
+	//whether the printer is currently connected and responding
+	printer.operational(flags.operational);
+	//whether the printer is currently printing>
+	printer.printing(flags.printing);
+	//whether the printer is currently disconnected and/or in an error state	
+	printer.closedOrError(flags.closedOrError);
+	//whether the printer is currently in an error state
+	printer.error(flags.error);
+	//whether the printer is currently paused
+	printer.paused(flags.paused);
+	//whether the printer is operational and ready for jobs
+	printer.ready(flags.ready);
 }
 
 function onMessageData(messages){
 	//console.log(currentPanel);
 	if (currentPanel == "offset") {
-		var re114 = /X:([+-]?[0-9.]+) Y:([+-]?[0-9.]+) Z:([+-]?[0-9.]+) E:([+-]?[0-9.]+)/;
-		var re851 = /echo:Z Offset : (.*)/;
 		var m;
-	
-		if ((m = re114.exec(messages)) !== null) {
-			//console.log(m);
-			offset.current_z(m[3]);
-		}
 		if ((m = re851.exec(messages)) !== null) {
 			//console.log(m);
 			offset.offset(m[1]);
+		} 
+		if ((m = re114.exec(messages)) != null) {
+			//console.log(m);
+			offset.current_z(m[3]);
 		}
 	}
 }
 
 function onEventData(type, payload) {
 	//console.log("Event '"+type + "': ", payload);
-	if (event === "PrinterStateChanged") {
-		printer.setStatus(payload.state_string);
+	if (type == "PrinterStateChanged") {	
+		//console.log(payload);	
+		printer.status(payload.state_string);
+		if (payload.state_id == "PRINTING") {
+			showProgress();
+			printer.progress(0.1); 
+		} else if (payload.state_id == "OFFLINE" || payload.state_id == "ERROR") {
+			hideProgress()
+		} else if (payload.state_id == "OPERATIONAL") {
+			hideProgress();
+		}
+	} else if (type == "Connected"){
+		printer.port(payload.port);
 	}
 }
+
 
 function onPluginData(name, data){
 	//console.log("Plugin '"+ name + "': ", data);
 	if(name === "switch") {
-		printer.power(JSON.parse(data.power));
+		printer.power(JSON.parse(data.power)); //convert to boolean
 		printer.lights(JSON.parse(data.lights));
 		printer.mute(JSON.parse(data.mute)); 
-
-		printer.isPower( printer.power() ? color_on : color_off );
-		printer.isLights( printer.lights() ? color_on : color_off );
-		printer.isMute( printer.mute() ? color_off: color_on );
+	} else 	if(name === "mobile") {
+		message(data.message);
 	}	
 }
