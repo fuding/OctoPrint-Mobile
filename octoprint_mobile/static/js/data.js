@@ -128,6 +128,8 @@ function onPluginData(name, data){
 			printer.power(JSON.parse(data.power)); //convert to boolean
 			printer.lights(JSON.parse(data.lights));
 			printer.mute(JSON.parse(data.mute));
+			printer.unload(JSON.parse(data.unload));
+			printer.poweroff(JSON.parse(data.poweroff));
 			break;
 		case "mobile":
 			message(data.message);

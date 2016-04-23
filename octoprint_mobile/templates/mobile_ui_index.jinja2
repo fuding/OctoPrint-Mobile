@@ -39,10 +39,13 @@
 
 					<div id="printer_panel" class="panel">
 						<div class="row printer_row_1">
-							<button type="button"  class="btn btn-lg btn-default" data-bind="click: printer.toggleMute, enable: has_switch"><span class="fa fa-lg fa-fw fa-bell" data-bind="style: { color: printer.mute()?'#ed2b36':'#17b566' }"></span> Speaker</button>
-							<button type="button"  class="btn btn-lg btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch"><span class="fa fa-lg fa-fw fa-repeat"></span> Reset</button>
-							<button type="button"  class="btn btn-lg btn-default" data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><span class="fa fa-lg fa-fw fa-usb"></span><span data-bind="text: (printer.ready() ? ' Disconnect' : ' Connect')"></span></button>
-							<button type="button"  class="btn btn-lg btn-default" data-bind="click: printer.togglePower, disable: ! has_switch || ( printer.printing() || printer.paused())"><span class="fa fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.power()?'#17b566':'#ed2b36' }"></span> Power</button>
+							<button type="button"  class="btn btn-default" data-bind="click: printer.toggleLights, enable: has_switch"><span class="fa fa-lg fa-fw fa-lightbulb-o" data-bind="style: { color: printer.lights()?'#17b566':'#ed2b36' }"></span></button>
+							<button type="button"  class="btn btn-default" data-bind="click: printer.toggleMute, enable: has_switch"><span class="fa fa-lg fa-fw fa-bell-o" data-bind="style: { color: printer.mute()?'#ed2b36':'#17b566' }"></span></button>
+							<button type="button"  class="btn btn-default" data-bind="click: printer.toggleUnload, enable: has_switch"><span class="fa fa-lg fa-fw fa-external-link" data-bind="style: { color: printer.unload()?'#3466ff':'#b1adaa' }"></span></button>
+							<button type="button"  class="btn btn-default" data-bind="click: printer.togglePowerOff, enable: has_switch"><span class="fa fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.poweroff()?'#3466ff':'#b1adaa' }"></span></button>
+							<button type="button"  class="btn btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch"><span class="fa fa-fw fa-repeat"></span> Reset</button>
+							<button type="button"  class="btn btn-default" data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><span class="fa fa-fw fa-usb"></span><span data-bind="text: (printer.ready() ? ' Disconnect' : ' Connect')"></span></button>
+							<button type="button"  class="btn btn-lg btn-default" data-bind="click: printer.togglePower, disable: ! has_switch || ( printer.printing() || printer.paused())"><span class="fa  fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.power()?'#17b566':'#ed2b36' }"></span> Power</button>
 						</div>
 						<div class="row printer_row_2">
 							<div class="row slider-row">

@@ -206,6 +206,10 @@ function PrinterModel(){
 	self.power = ko.observable();
 	self.lights = ko.observable(false);
 	self.mute = ko.observable(false);
+	self.unload = ko.observable(false);
+	self.poweroff = ko.observable(false);
+	
+	
 	
 	//whether the printer is currently connected and responding
 	self.operational = ko.observable(false);
@@ -288,6 +292,14 @@ function PrinterModel(){
 
 	self.togglePower = function(){
 		sendSwitchCommand("power",!self.power());
+	}
+
+	self.toggleUnload = function(){
+		sendSwitchCommand("unload",!self.unload());
+	}
+
+	self.togglePowerOff = function(){
+		sendSwitchCommand("poweroff",!self.poweroff());
 	}
 
 	self.resetPrinter = function(){
