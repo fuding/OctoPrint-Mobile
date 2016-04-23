@@ -333,3 +333,8 @@ body {
 	width: 90%;
     margin-left: 5%;
 }
+
+[data-notify="message"] {
+	font-size: 8vh;
+	line-height: 8vh;
+}

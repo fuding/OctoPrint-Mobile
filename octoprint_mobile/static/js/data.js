@@ -58,8 +58,11 @@ function onCurrentData(current){
 		printer.progress(parseInt(current.progress.completion));
 		//console.log(formatSeconds(current.progress.printTimeLeft));
 		if(current.progress.printTimeLeft != null){
-			
-			printer.time_left(formatSeconds(current.progress.printTimeLeft));
+			if (current.progress.printTimeLeft > 0) {
+				printer.time_left(formatSeconds(current.progress.printTimeLeft));
+			} else {
+				printer.time_left(formatSeconds( current.progress.printTime * 100 / parseInt(current.progress.completion) - current.progress.printTime));
+			}
 		}
 		printer.time_elapsed(formatSeconds(current.progress.printTime));
 	}
@@ -99,30 +102,38 @@ function onMessageData(messages){
 
 function onEventData(type, payload) {
 	//console.log("Event '"+type + "': ", payload);
-	if (type == "PrinterStateChanged") {	
-		//console.log(payload);	
-		printer.status(payload.state_string);
-		if (payload.state_id == "PRINTING") {
-			showProgress();
-			printer.progress(0.1); 
-		} else if (payload.state_id == "OFFLINE" || payload.state_id == "ERROR") {
-			hideProgress()
-		} else if (payload.state_id == "OPERATIONAL") {
-			hideProgress();
-		}
-	} else if (type == "Connected"){
-		printer.port(payload.port);
+	switch (type) {
+		case "PrinterStateChanged":
+			printer.status(payload.state_string);
+			if (payload.state_id == "PRINTING") {
+				showProgress();
+				printer.progress(0.1); 
+			} else if (payload.state_id == "OFFLINE" || payload.state_id == "ERROR") {
+				hideProgress()
+			} else if (payload.state_id == "OPERATIONAL") {
+				hideProgress();
+			}
+			break;
+		case "Connected":
+			printer.port(payload.port);
+			break;
 	}
 }
 
 
 function onPluginData(name, data){
 	//console.log("Plugin '"+ name + "': ", data);
-	if(name === "switch") {
-		printer.power(JSON.parse(data.power)); //convert to boolean
-		printer.lights(JSON.parse(data.lights));
-		printer.mute(JSON.parse(data.mute)); 
-	} else 	if(name === "mobile") {
-		message(data.message);
-	}	
+	switch (name) {
+		 case "switch":
+			printer.power(JSON.parse(data.power)); //convert to boolean
+			printer.lights(JSON.parse(data.lights));
+			printer.mute(JSON.parse(data.mute));
+			break;
+		case "mobile":
+			message(data.message);
+			break;
+		case "status_line":
+			message(data.status_line);
+			break;
+	}
 }
