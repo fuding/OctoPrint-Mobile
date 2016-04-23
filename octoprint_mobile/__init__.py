@@ -6,12 +6,12 @@ import logging
 import logging.handlers
 
 import ConfigParser, hashlib, os
-from flask import make_response, render_template, jsonify, url_for
+from flask import make_response, render_template, jsonify, url_for, request
 
 class MobileUIPlugin(octoprint.plugin.UiPlugin,
 	 		octoprint.plugin.TemplatePlugin,
 			octoprint.plugin.AssetPlugin,
-			octoprint.plugin.SimpleApiPlugin):
+			octoprint.plugin.BlueprintPlugin):
 					
 	def initialize(self):
 		self._logger.info("Mobile UI for Octoprint Viewer available")
@@ -29,45 +29,43 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 			has_switch="false"
 		return make_response(render_template("mobile_ui_index.jinja2", mobile_url=mobile_url, has_switch=has_switch) )
 
-	def on_api_get(self, request):
+	@octoprint.plugin.BlueprintPlugin.route("/home", methods=["GET"])
+	def check_home(self):
 		self._logger.info("X-Forwarded-For : [%s]"%request.headers.getlist("X-Forwarded-For"))
 		for remote in request.headers.getlist("X-Forwarded-For"): #always via haproxy
 			if remote.split('.')[0] != '192':
 				return jsonify(home=False)
 		return jsonify(home=True)
 	
-	def get_api_commands(self):
-		return dict(
-			deselect=[],
-			gcodes=['id']
-		)
-	
-	def on_api_command(self, command, data):
-		self._logger.debug("on_api_command called: '{command}' / '{data}'".format(**locals()))
-		if command == "deselect":
+	@octoprint.plugin.BlueprintPlugin.route("/unselect", methods=["GET"])
+	def unselect_file(self):
 			self._printer.unselect_file()
-		elif command == "gcodes":
-			id = data.get('id') or "?"
-			gcodes = ConfigParser.ConfigParser()
-			inifile = os.path.join(self._basefolder, "gcodes.ini")
-			if os.path.isfile(os.path.join(self.get_plugin_data_folder(), "gcodes.ini")):
-				inifile = os.path.join(self.get_plugin_data_folder(), "gcodes.ini")
-				
-			gcodes.read(inifile)
-			md5 = hashlib.md5(open(inifile, 'rb').read()).hexdigest()
-			#self._logger.debug("gcode version: remote ["  +id +"] vs local ["+md5+"] ...")
-			if id == md5:
-				return jsonify(update=False)
-			else:
-				self._logger.info("new gcode version: remote ["  +id +"] vs local [" + md5 + "] ...")
-				retval = {'update':True, 'id':md5}
-				for section in gcodes.sections():
-					view = gcodes.items(section)
-					commands = {}
-					for key,value in view:
-						commands.update({key: value})
-					retval.update({section: commands})
-				return jsonify(retval)
+			return 'OK'
+			
+	@octoprint.plugin.BlueprintPlugin.route("/gcodes", methods=["POST"])
+	def get_ini_gcodes(self):
+		data = request.get_json(silent=True)
+		identifier = data["id"] or "?"
+		gcodes = ConfigParser.ConfigParser()
+		inifile = os.path.join(self._basefolder, "gcodes.ini")
+		if os.path.isfile(os.path.join(self.get_plugin_data_folder(), "gcodes.ini")):
+			inifile = os.path.join(self.get_plugin_data_folder(), "gcodes.ini")
+			
+		gcodes.read(inifile)
+		md5 = hashlib.md5(open(inifile, 'rb').read()).hexdigest()
+		#self._logger.debug("gcode version: remote ["  +identifier +"] vs local ["+md5+"] ...")
+		if identifier == md5:
+			return jsonify(update=False)
+		else:
+			self._logger.info("new gcode version: remote ["  +identifier +"] vs local [" + md5 + "] ...")
+			retval = {'update':True, 'id':md5}
+			for section in gcodes.sections():
+				view = gcodes.items(section)
+				commands = {}
+				for key,value in view:
+					commands.update({key: value})
+				retval.update({section: commands})
+			return jsonify(retval)
 
 __plugin_name__ = "Mobile UI"
 __plugin_implementation__ = MobileUIPlugin()

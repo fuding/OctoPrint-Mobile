@@ -48,12 +48,13 @@ function ActionModel(){
 	}
 
 	self.deselectFile = function(){
-		sendMobileCommand("deselect");
+		unselect();
 	}
 	
 	self.loadLatestFile = function(){
 		getGcodeFiles(function(result){
-			sendLoadFile(_.first(_.sortBy(result.files, "date")).name);
+			//console.log(_.last(_.sortBy(result.files, "date")).name);
+			sendLoadFile(_.last(_.sortBy(result.files, "date")).name);
 		});
 	}
 

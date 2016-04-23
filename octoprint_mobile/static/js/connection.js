@@ -150,7 +150,7 @@ function sendSwitchCommand(command, status){
 //mobile plugin
 function checkHome(callback){
 	$.ajax({
-		url:  BASE_URL+"api/"+MOBILE_URL,
+		url:  BASE_URL+MOBILE_URL+"/home",
 		headers: {"X-Api-Key": API_KEY},
 		method: "GET",
 		timeout: 10000,
@@ -159,8 +159,16 @@ function checkHome(callback){
 	}).done(function(data){if (typeof callback === "function") callback(data);});
 }
 
+
 function checkGcodes(){
-	sendMobile({"command":"gcodes", "id":localStorage.getItem("gcodes.mobile.id")}, function(data){
+	$.ajax({
+		url:  BASE_URL+MOBILE_URL+"/gcodes",
+		headers: {"X-Api-Key": API_KEY},
+		method: "POST",
+		timeout: 10000,
+		contentType: "application/json",
+		data: JSON.stringify({"id":localStorage.getItem("gcodes.mobile.id")}),		
+	}).done( function(data){
 		if (typeof(data) === "string") {
 			data = JSON.parse(data);
 		}		
@@ -177,21 +185,16 @@ function checkGcodes(){
 	});
 }
 
-function sendMobileCommand(command){
-	sendMobile({"command": command});
+function unselect(){
+	$.ajax({
+		url:  BASE_URL+MOBILE_URL+"/unselect",
+		headers: {"X-Api-Key": API_KEY},
+		method: "GET",
+		timeout: 10000,
+		contentType: "application/json"
+	});
 }
 
-function sendMobile(data, callback){
-		$.ajax({
-			url:  BASE_URL+"api/"+MOBILE_URL,
-			headers: {"X-Api-Key": API_KEY},
-			method: "POST",
-			timeout: 10000,
-			contentType: "application/json",
-			data: JSON.stringify(data),
-			
-		}).done(function(data){if (typeof callback === "function") callback(data);});
-}
 
 //error handling
 function protocol_error(reason) {
