@@ -26,9 +26,7 @@ $(document).ready(function() {
 				printer.port(data.current.port);
 			 });
 			printer.power(! has_switch);
-			printer.acceptsCommands.extend({ notify: 'dirty' }); //set back to notify on change only			
-			printer.alwaysAcceptsCommands.extend({ notify: 'dirty' });
-			
+
 			connect();
 		} else {
 			// allow scrolling

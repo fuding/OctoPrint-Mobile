@@ -101,7 +101,7 @@ function sendJobCommand(command){
 function sendCommandByName(name){
 	var gcode = gcodes_action[name];
 	if (gcode != undefined) {
-		sendCommand(gcode.split(","));
+		sendCommand( make_array(gcode) );
 	}
 }
 
@@ -150,7 +150,7 @@ function sendSwitchCommand(command, status){
 //mobile plugin
 function checkHome(callback){
 	$.ajax({
-		url:  BASE_URL+MOBILE_URL+"/home",
+		url:  MOBILE_URL+"/home",
 		headers: {"X-Api-Key": API_KEY},
 		method: "GET",
 		timeout: 10000,
@@ -162,7 +162,7 @@ function checkHome(callback){
 
 function checkGcodes(){
 	$.ajax({
-		url:  BASE_URL+MOBILE_URL+"/gcodes",
+		url:  MOBILE_URL+"/gcodes",
 		headers: {"X-Api-Key": API_KEY},
 		method: "POST",
 		timeout: 10000,
@@ -187,7 +187,7 @@ function checkGcodes(){
 
 function unselect(){
 	$.ajax({
-		url:  BASE_URL+MOBILE_URL+"/unselect",
+		url:  MOBILE_URL+"/unselect",
 		headers: {"X-Api-Key": API_KEY},
 		method: "GET",
 		timeout: 10000,

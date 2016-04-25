@@ -156,40 +156,30 @@ body {
 	padding-right: 6%;
 }
 
-#printing_time_left {
+.printing_time_left {
 	background-color: #ed2b36;
 }
 
-#printing_time_elapsed {
-	background-color: #17b566;
+.printing_time_elapsed {
+  background-color: #17b566;
+  border-top: #555;
+  border-top-style: solid;
+  border-top-width: 1px;
 }
 
-#extruder_temp {
+.extruder_temp {
 	background-color: #22527B;
 }
 
-#bed_temp {
+.bed_temp {
 	background-color: #272727;
 }
 
-#printer_status {
+.printer_status {
 	font-size: 15vh;
 }
 
-#printing_time_elapsed {
-	border-top: #555;
-    border-top-style: solid;
-    border-top-width: 1px;
-}
 
-#printer_icons {
-	background-color: white;
-	font-size: 10vh;
-}
-
-#temp_field {
-	text-align: center;
-}
 
 #disconnected_view {
 	text-align: center;

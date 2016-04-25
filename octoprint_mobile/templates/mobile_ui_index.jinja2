@@ -30,11 +30,11 @@
 				<div class="col-xs-10 main no-padding">
 
 					<div id="status_panel" class="panel">
-						<div class="status_bar" data-bind="style: { background: printer.progress()>0? 'linear-gradient(90deg, #17b566 '+printer.progress()+'%, #ed2b36 0%)':printer.power()?'#17b566':'#ed2b36' }" id="printer_status"><div id="port" data-bind="text: printer.port"></div><div data-bind="text: printer.status"></div></div>
-						<div class="status_bar" id="printing_time_elapsed" style="display:none;" data-bind="text:printer.time_elapsed"></div>
-						<div class="status_bar" id="printing_time_left" style="display:none;" data-bind="text:printer.time_left"></div>
-						<div class="status_bar" id="extruder_temp"><div data-bind="visible: printer.extruder_actual() > 0 "><span class='fa fa-lg fa-fw fa-fire'></span><span data-bind="text:extruder_temp"></span></div></div>
-						<div class="status_bar" id="bed_temp"><div data-bind="visible: printer.bed_actual() > 0 "><span class='fa fa-lg fa-fw fa-bed'></span><span data-bind="text:bed_temp"></span></div></div>
+						<div class="status_bar printer_status" data-bind="style: { background: printer.progress() > 0 ? 'linear-gradient(90deg, #17b566 '+printer.progress()+'%, #ed2b36 0%)':printer.power()?'#17b566':'#ed2b36' }"><div id="port" data-bind="text: printer.port"></div><div data-bind="text: printer.status"></div></div>
+						<div class="status_bar printing_time_elapsed" data-bind="visible: printer.showProgress, text:printer.time_elapsed"></div>
+						<div class="status_bar printing_time_left" data-bind="visible: printer.showProgress, text:printer.time_left"></div>
+						<div class="status_bar extruder_temp"><div data-bind="visible: printer.extruder_actual() > 0 "><span class='fa fa-lg fa-fw fa-fire'></span><span data-bind="text:extruder_temp"></span></div></div>
+						<div class="status_bar bed_temp"><div data-bind="visible: printer.bed_actual() > 0 "><span class='fa fa-lg fa-fw fa-bed'></span><span data-bind="text:bed_temp"></span></div></div>
 					</div>
 
 					<div id="printer_panel" class="panel">
@@ -130,7 +130,7 @@
 							</div>
 						</div>
 						<div class="row movement-row-3">
-							<button type="button" class="btn btn-lg btn-default" data-bind="enable: printer.acceptsCommands, click: sendCommandByName.bind($data, 'motors_off')"><span class="fa fa-lg fa-fw fa-gears"></span> Motors Off</button>
+							<button type="button" class="btn btn-lg btn-default" data-bind="click: sendCommandByName.bind($data, 'motors_off')"><span class="fa fa-lg fa-fw fa-gears"></span> Motors Off</button>
 						</div>
 						<div class="row movement-row-4">
 								<div class="btn-group-vertical">
@@ -244,7 +244,7 @@
 	var home = false;
 	var BASE_URL = location.protocol + '//' + location.host + "/";
 	var API_KEY = "{{ request.args.get('apikey') }}";
-	var MOBILE_URL = "{{ mobile_url }}";
+	var MOBILE_URL = BASE_URL+"{{ mobile_url }}";
 	var has_switch = {{ has_switch }};
 	</script>
     

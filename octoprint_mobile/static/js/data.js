@@ -1,6 +1,3 @@
-var color_on = "#17b566"; 
-var color_off = "#ed2b36"; 
-
 var re114 = /X:([+-]?[0-9.]+) Y:([+-]?[0-9.]+) Z:([+-]?[0-9.]+) E:([+-]?[0-9.]+)/;
 var re851 = /echo:Z Offset : ([-.\d]*)/;
 
@@ -23,28 +20,22 @@ function onReceivedData(data){
 	
 	if(typeof(data.plugin) !== "undefined"){
 		onPluginData(data.plugin.plugin, data.plugin.data);
-	}
-	
+	}	
 }
 
 function onHistoryData(history){
  	//console.log(history);
  	printer.status(history.state.text);
-	updateFlasgs(history.state.flags);
-	//printer.status(payload.state_string);
-	if (history.state.text == "Printing") {
-		showProgress();		
-	} else {
-		hideProgress();
-	}
+	updateFlasgs(history.state.flags);	
 }
 
 function onCurrentData(current){
 	// uppdate printer status
 	//console.log(current);	
+	updateFlasgs(current.state.flags);
+	printer.status(current.state.text);
 	printer.fileToPrint(current.job.file.name);
 
-	updateFlasgs(current.state.flags);
 	onMessageData(current.messages);
 	
 	if(typeof(current.temps[0]) !== "undefined"){
@@ -55,8 +46,11 @@ function onCurrentData(current){
 	} 
 		
 	if(current.state.flags.printing){
-		printer.progress(parseInt(current.progress.completion));
 		//console.log(formatSeconds(current.progress.printTimeLeft));
+		printer.progress(parseFloat(current.progress.completion));
+		
+		printer.time_elapsed(formatSeconds(current.progress.printTime));
+		
 		if(current.progress.printTimeLeft != null){
 			if (current.progress.printTimeLeft > 0) {
 				printer.time_left(formatSeconds(current.progress.printTimeLeft));
@@ -64,10 +58,7 @@ function onCurrentData(current){
 				printer.time_left(formatSeconds( current.progress.printTime * 100 / parseInt(current.progress.completion) - current.progress.printTime));
 			}
 		}
-		printer.time_elapsed(formatSeconds(current.progress.printTime));
 	}
-	
-	printer.status(current.state.text);
 }
 
 function updateFlasgs(flags){
@@ -103,17 +94,6 @@ function onMessageData(messages){
 function onEventData(type, payload) {
 	//console.log("Event '"+type + "': ", payload);
 	switch (type) {
-		case "PrinterStateChanged":
-			printer.status(payload.state_string);
-			if (payload.state_id == "PRINTING") {
-				showProgress();
-				printer.progress(0.1); 
-			} else if (payload.state_id == "OFFLINE" || payload.state_id == "ERROR") {
-				hideProgress()
-			} else if (payload.state_id == "OPERATIONAL") {
-				hideProgress();
-			}
-			break;
 		case "Connected":
 			printer.port(payload.port);
 			break;
