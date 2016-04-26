@@ -43,7 +43,7 @@ function onCurrentData(current){
 		printer.bed_target(current.temps[0].bed.target);
 		printer.extruder_actual(current.temps[0].tool0.actual);
 		printer.extruder_target(current.temps[0].tool0.target);
-	} 
+	}
 		
 	if(current.state.flags.printing){
 		//console.log(formatSeconds(current.progress.printTimeLeft));

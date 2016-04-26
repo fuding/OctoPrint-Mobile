@@ -1,11 +1,11 @@
 var socket;
-var retry_count = 50;
+var retry_count = 60;
 var gcodes_offset;
 var gcodes_action;
 
 function connect(){
 	disconnect()
-	checkGcodes();
+	getGcodes();
 	socket = new SockJS(BASE_URL+"sockjs/");
 	
 	socket.timeoutInterval = 5400;
@@ -14,7 +14,7 @@ function connect(){
 	socket.onopen = function() {
 		switchView("main");
 		sendSwitchCommand("status");
-		retry_count = 50;
+		retry_count = 60;
 	};
 	
 	socket.onmessage = function(e) {
@@ -101,7 +101,7 @@ function sendJobCommand(command){
 function sendCommandByName(name){
 	var gcode = gcodes_action[name];
 	if (gcode != undefined) {
-		sendCommand( make_array(gcode) );
+		sendCommand( gcode.split(",") );
 	}
 }
 
@@ -126,7 +126,7 @@ function sendCommand(data){
 
 //switch plugin
 function sendSwitch(data, callback){
-	if (has_switch) {
+	if (has_switch()) {
 		$.ajax({
 			url:  BASE_URL+"api/plugin/switch",
 			headers: {"X-Api-Key": API_KEY},
@@ -160,14 +160,13 @@ function checkHome(callback){
 }
 
 
-function checkGcodes(){
+function getGcodes(){
 	$.ajax({
-		url:  MOBILE_URL+"/gcodes",
+		url:  MOBILE_URL+"/gcodes/"+localStorage.getItem("gcodes.mobile.id"),
 		headers: {"X-Api-Key": API_KEY},
-		method: "POST",
+		method: "GET",
 		timeout: 10000,
-		contentType: "application/json",
-		data: JSON.stringify({"id":localStorage.getItem("gcodes.mobile.id")}),		
+		contentType: "application/json"
 	}).done( function(data){
 		if (typeof(data) === "string") {
 			data = JSON.parse(data);

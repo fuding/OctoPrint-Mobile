@@ -6,6 +6,7 @@ import logging
 import logging.handlers
 
 import ConfigParser, hashlib, os
+import re
 from flask import make_response, render_template, jsonify, url_for, request
 
 class MobileUIPlugin(octoprint.plugin.UiPlugin,
@@ -42,10 +43,8 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 			self._printer.unselect_file()
 			return 'OK'
 			
-	@octoprint.plugin.BlueprintPlugin.route("/gcodes", methods=["POST"])
-	def get_ini_gcodes(self):
-		data = request.get_json(silent=True)
-		identifier = data["id"] or "?"
+	@octoprint.plugin.BlueprintPlugin.route("/gcodes/<identifier>", methods=["GET"])
+	def get_ini_gcodes(self, identifier):
 		gcodes = ConfigParser.ConfigParser()
 		inifile = os.path.join(self._basefolder, "gcodes.ini")
 		if os.path.isfile(os.path.join(self.get_plugin_data_folder(), "gcodes.ini")):
@@ -61,9 +60,10 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 			retval = {'update':True, 'id':md5}
 			for section in gcodes.sections():
 				view = gcodes.items(section)
-				commands = {}
+				commands = {} 
 				for key,value in view:
-					commands.update({key: value})
+					#remove all extra spaces
+					commands.update({key: ",".join(map(str.strip, re.sub( '\s+', ' ', value).split(',')) )})
 				retval.update({section: commands})
 			return jsonify(retval)
 

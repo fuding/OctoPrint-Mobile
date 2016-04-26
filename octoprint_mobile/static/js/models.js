@@ -135,45 +135,45 @@ function OffsetModel() {
 	}
 
 	self.prepareOffset = function(){
-		sendCommand( make_array( gcodes_offset.prepare_offset ) );
+		sendCommand( gcodes_offset.prepare_offset.split(",") );
 		self.prepared(true);
 	}
 	
 	self.saveOffset = function(){
-		sendCommand( make_array( gcodes_offset.save_offset.replace("{{z}}", self.current_z()) ) );
+		sendCommand( gcodes_offset.save_offset.replace("{{z}}", self.current_z()).split(","));
 		self.prepared(false);
 	}
 
 	self.offsetTest = function(){
-		sendCommand( make_array( gcodes_offset.offset_test ) );
+		sendCommand( gcodes_offset.offset_test.split(","));
 	}
 
 	self.offsetDone = function(){
-		sendCommand( make_array( gcodes_offset.offset_done ) );
+		sendCommand( gcodes_offset.offset_done.split(",") );
 	}
 	
 	self.findZero = function(){
-		sendCommand( make_array( gcodes_offset.find_reference ) );
+		sendCommand( gcodes_offset.find_reference.split(",") );
 	}
 
 	self.backLeft = function(){
-		sendCommand( make_array( gcodes_offset.back_left ) );
+		sendCommand( gcodes_offset.back_left.split(",") );
 	}
 
 	self.frontMiddle = function(){
-		sendCommand( make_array( gcodes_offset.front_middle ) );
+		sendCommand( gcodes_offset.front_middle.split(",") );
 	}
 
 	self.backRight = function(){
-		sendCommand( make_array( gcodes_offset.back_right ) );
+		sendCommand( gcodes_offset.back_right.split(",") );
 	}
 	
 	self.sendOffsetAdjustment = function(z){
 		if (self.prepared()){
-			sendCommand( make_array(  gcodes_offset.send_relative_z.replace("{{z}}", z) ) );
+			sendCommand( gcodes_offset.send_relative_z.replace("{{z}}", z).split(",") );
 		} else {
-			sendCommand( make_array( gcodes_offset.save_offset.replace("{{z}}", (parseFloat(self.offset()) + parseFloat(z)) ) ) 
-			.concat( make_array(  gcodes_offset.send_relative_z.replace("{{z}}", z) ) ) );
+			sendCommand( gcodes_offset.save_offset.replace( "{{z}}", ( parseFloat(self.offset()) + parseFloat(z) ) ).split(",") 
+			.concat(  gcodes_offset.send_relative_z.replace("{{z}}", z).split(",")  )  );
 		}
 	}
 	
@@ -191,11 +191,11 @@ function PrinterModel(){
 	self.time_elapsed = ko.observable("00:00:00");
 	self.time_left =  ko.observable("Calculating...");
 	
-	self.power = ko.observable();
-	self.lights = ko.observable(null);
-	self.mute = ko.observable(null);
-	self.unload = ko.observable(null);
-	self.poweroff = ko.observable(null);
+	self.power = ko.observable(true);
+	self.lights = ko.observable(false);
+	self.mute = ko.observable(true);
+	self.unload = ko.observable(false);
+	self.poweroff = ko.observable(false);
 	
 	//whether the printer is currently connected and responding
 	self.operational = ko.observable(null);
@@ -255,24 +255,28 @@ function PrinterModel(){
 		}
 	});
 	
-	self.showProgress.subscribe(function(value) {
-		if (value) {
-			$(".status_bar").css({"height": "20vh", "line-height": "20vh"});
-			printer.progress(0.1); //make sure the colors change
+	self.operational.subscribe(function(value) {
+		if (!value) {
+			self.bed_actual(0);
+			self.extruder_actual(0);
+			$(".status_bar").css({"height": "100vh", "line-height": "100vh"});
 		} else {
 			$(".status_bar").css({"height": "33.34vh", "line-height": "33.34vh"});
-			$("#printing_time_left").text("");
-			$("#printing_time_elapsed").text("");	
-			printer.bed_actual(0);
-			printer.extruder_actual(0);
-			printer.progress(0);
 		}
 	});
 	
-	//hack to enable/disable sliders
+	self.showProgress.subscribe(function(value) {
+		if (value) {
+			$(".status_bar").css({"height": "20vh", "line-height": "20vh"});
+			self.progress(0.1); //make sure the colors change
+		} 
+	});
+	
 	self.acceptsCommands.subscribe(function(value) {
 		if (value) {
 			$("input.temp_slider").slider('enable');
+			$(".status_bar").css({"height": "33.34vh", "line-height": "33.34vh"});
+			self.progress(0);
 		} else {
 			$("input.temp_slider").slider('disable');
 			action.extruder_slider_value(0);
