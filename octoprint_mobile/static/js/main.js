@@ -25,8 +25,15 @@ $(document).ready(function() {
 				printer.status(data.current.state);
 				printer.port(data.current.port);
 			 });
-			connect();
-			
+
+			 connect();
+			 //tiny hack to disable sliders
+			 var t = printer.power();
+			 printer.power(true);
+			 printer.power(false);
+			 printer.power(t);
+			 printer.acceptsCommands.extend({ notify: 'dirty' }); 
+			 
 		} else {
 			// allow scrolling
 			document.ontouchmove = function(event){

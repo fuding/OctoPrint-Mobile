@@ -26,8 +26,8 @@
 					<ul class="nav nav-sidebar">
 						<li><a class="sidebar-nav" id="status_btn"><span class="fa fa-fw fa-info-circle"></span></a></li>
 						<li><a class="sidebar-nav" id="printer_btn"><span class="fa fa-fw fa-print"></span></a></li>
-						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-fw fa-arrows" data-bind="style: { color: acceptsCommands() ? '' : '#888' }"></span></a></li>
-						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-fw fa-sliders" data-bind="style: { color: acceptsCommands() ? '' : '#888' }"></span></a></li>
+						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-fw fa-arrows" data-bind="style: { color: acceptsCommands() ? '' : '#234766' }"></span></a></li>
+						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-fw fa-sliders" data-bind="style: { color: acceptsCommands() ? '' : '#234766' }"></span></a></li>
 						<li><a class="sidebar-nav" id="camera_btn"><span class="fa fa-fw fa-camera"></span></a></li>
 					</ul>
 				</div>
@@ -57,7 +57,7 @@
 									<input class="temp_slider" type="text" data-bind="sliderValue: {value: extruder_slider_value, ticks: [0, 100, 160, 180, 200, 210, 230, 250], ticks_positions: [0, 10, 25, 40, 55, 70, 85, 100], ticks_labels: ['Off', '100', '160', '180', '200', '210', '230', '250'], ticks_snap_bounds: 3, tooltip: 'hide'}"/>
 								</div>
 								<div class="col-xs-4">
-									<button type="button" class="btn btn-default" data-bind="enable: printer.acceptsCommands, click: sendExtruderTemperature, style: { color: extruder_slider_value() == 0  ? '#17b566' : '#ed2b36' }"><span>Turn&nbsp;</span><span class="fa fa-lg fa-fw fa-fire"></span><span data-bind="text: extruder_slider_value() == 0  ? ' off': ' to ' + extruder_slider_value() + 'ºC' ""></span></button>
+									<button type="button" class="btn btn-default" data-bind="enable: printer.acceptsCommands, click: sendExtruderTemperature, style: { color: extruder_slider_value() == 0  ? '#17b566' : '#ed2b36' }"><span>Turn&nbsp;</span><span class="fa fa-lg fa-fw fa-fire"></span><span data-bind="text: extruder_slider_value() == 0  ? ' off': ' to ' + extruder_slider_value() + 'ºC'"></span></button>
 								</div>
 							</div>
 							<div class="row  slider-row">
@@ -105,8 +105,8 @@
 							</div>
 						<div class="col-xs-6 no-padding">
 							<div class="btn-group btn-spaced">
-								<button type="button" class="btn btn-lg btn-default" data-bind="click: sendCommandByName.bind($data, 'load_filament')"><span class="fa fa-fw fa-long-arrow-down"></span> Load</button>
-								<button type="button" class="btn btn-lg btn-default" data-bind="click: sendCommandByName.bind($data, 'unload_filament')"><span class="fa fa-fw fa-long-arrow-up"></span> Unload</button>
+								<button type="button" class="btn btn-lg btn-default" data-bind="click: load_filament"><span class="fa fa-fw fa-long-arrow-down"></span> Load</button>
+								<button type="button" class="btn btn-lg btn-default" data-bind="click: unload_filament"><span class="fa fa-fw fa-long-arrow-up"></span> Unload</button>
 							</div>
 							</div>
 						</div>
@@ -177,7 +177,7 @@
 								</div>
 						</div>
 					</div>
-					<div id="offset_panel" class="panel"">
+					<div id="offset_panel" class="panel">
 						<div class="col-xs-10 no-padding">
 							<div class="offset_bar">
 								<div class="input-group full_width square">
@@ -224,7 +224,7 @@
 							</div>
 						</div>
 					</div>
-					<div id="camera_panel" class="panel"">
+					<div id="camera_panel" class="panel">
 						<img data-bind="click: toggleLights" id="webcam"/>
 					</div>
 				</div>
@@ -233,7 +233,7 @@
 	</div>
 	<div id="disconnected_view" class="view">
 			<div id="disconnected_message">Disconnected</div>
-			<button type="button" class="btn btn-lg btn-default" id="reconnect"><span class='fa fa-lg fa-fw fa-chain-broken'></span> Attempt to reconnect</button>
+			<button type="button" class="btn btn-lg btn-default" id="reconnect"><span class="fa fa-lg fa-fw fa-chain-broken"></span> Attempt to reconnect</button>
 	</div>
 	
 	<div id="loading_view" class="view"></div>

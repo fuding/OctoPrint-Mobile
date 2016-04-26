@@ -115,6 +115,21 @@ function ActionModel(){
 		}
 	}
 	
+	self.load_filament = function(){
+		bootbox.confirm({ closeButton: false, message: "Load filament", callback: function(result) {
+	  	  if (result) {
+		  		sendCommandByName('load_filament');
+	  		}
+		}});
+	}
+
+	self.unload_filament = function(){
+		bootbox.confirm({ closeButton: false, message: "Unload filament", callback: function(result) {
+	  	  if (result) {
+		  		sendCommandByName('unload_filament');
+	  		}
+		}});
+	}
 }
 
 function OffsetModel() {
@@ -228,7 +243,7 @@ function PrinterModel(){
 		
 	self.acceptsCommands = ko.computed(function(){
 		if (!self.power()) return false;
-		if ( self.printing() || self.paused() ){
+		if ( self.printing() ) { //|| self.paused() ){
 			return false;
 		} else {
 			if (self.ready() ) {
@@ -271,6 +286,9 @@ function PrinterModel(){
 			self.progress(0.1); //make sure the colors change
 		} 
 	});
+	
+	
+	self.acceptsCommands.extend({ notify: 'always' }); 
 	
 	self.acceptsCommands.subscribe(function(value) {
 		if (value) {
