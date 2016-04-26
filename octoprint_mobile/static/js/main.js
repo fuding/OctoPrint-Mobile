@@ -25,9 +25,8 @@ $(document).ready(function() {
 				printer.status(data.current.state);
 				printer.port(data.current.port);
 			 });
-			printer.power(! has_switch);
-
 			connect();
+			
 		} else {
 			// allow scrolling
 			document.ontouchmove = function(event){
