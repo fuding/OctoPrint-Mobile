@@ -310,11 +310,20 @@ body {
 	margin-left: -27.2857px !important;
 }
 
-#port {
+.port {
 	text-align: right;
 	font-size: 15px;
 	position: absolute;
 	top: 5px;
+	right: 5px;
+	line-height: 10px;
+}
+
+.zchange {
+	text-align: right;
+	font-size: 15px;
+	position: absolute;
+	top: 60px;
 	right: 5px;
 	line-height: 10px;
 }
@@ -328,3 +337,11 @@ body {
 	font-size: 8vh;
 	line-height: 8vh;
 }
+
+.btn-warning {
+  width: 340px;
+  color: #888;
+  border-color: #fddf18; 
+  background-image: linear-gradient(to top,#fddf18 0, #ffff01 100%);
+};
+

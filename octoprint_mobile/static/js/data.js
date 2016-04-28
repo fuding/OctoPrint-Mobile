@@ -49,14 +49,10 @@ function onCurrentData(current){
 		//console.log(formatSeconds(current.progress.printTimeLeft));
 		printer.progress(parseFloat(current.progress.completion));
 		
-		printer.time_elapsed(formatSeconds(current.progress.printTime));
+		printer.time_elapsed(parseInt(current.progress.printTime));
 		
 		if(current.progress.printTimeLeft != null){
-			if (current.progress.printTimeLeft > 0) {
-				printer.time_left(formatSeconds(current.progress.printTimeLeft));
-			} else {
-				printer.time_left(formatSeconds( current.progress.printTime * 100 / parseInt(current.progress.completion) - current.progress.printTime));
-			}
+			printer.time_left(parseInt(current.progress.printTimeLeft));
 		}
 	}
 }
@@ -112,7 +108,11 @@ function onPluginData(name, data){
 			printer.poweroff(JSON.parse(data.poweroff));
 			break;
 		case "mobile":
-			message(data.message);
+			if ( typeof(data.message) !== "undefined") {
+				message(data.message);
+			} else if ( typeof(data.zchange) !== "undefined") { 
+				printer.zchange(data.zchange+"mm");
+			}
 			break;
 		case "status_line":
 			message(data.status_line);

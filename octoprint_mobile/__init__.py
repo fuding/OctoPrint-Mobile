@@ -9,6 +9,8 @@ import ConfigParser, hashlib, os
 import re
 from flask import make_response, render_template, jsonify, url_for, request
 
+__plugin_name__ = "Mobile UI"
+
 class MobileUIPlugin(octoprint.plugin.UiPlugin,
 	 		octoprint.plugin.TemplatePlugin,
 			octoprint.plugin.AssetPlugin,
@@ -67,8 +69,21 @@ class MobileUIPlugin(octoprint.plugin.UiPlugin,
 				retval.update({section: commands})
 			return jsonify(retval)
 
-__plugin_name__ = "Mobile UI"
-__plugin_implementation__ = MobileUIPlugin()
+	def custom_action_handler(self, comm, line, action, *args, **kwargs):
+		if action[:7] == "zchange":
+			self._plugin_manager.send_plugin_message(self._identifier, dict(zchange = action[8:]))
+			
+
+def __plugin_load__():
+	global __plugin_implementation__
+	__plugin_implementation__ = MobileUIPlugin()
+
+	global __plugin_hooks__
+	__plugin_hooks__ = {"octoprint.comm.protocol.action": __plugin_implementation__.custom_action_handler}
+			
+
+
+
 
 
 	

@@ -26,19 +26,19 @@
 					<ul class="nav nav-sidebar">
 						<li><a class="sidebar-nav" id="status_btn"><span class="fa fa-fw fa-info-circle"></span></a></li>
 						<li><a class="sidebar-nav" id="printer_btn"><span class="fa fa-fw fa-print"></span></a></li>
-						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-fw fa-arrows" data-bind="style: { color: acceptsCommands() ? '' : '#234766' }"></span></a></li>
-						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-fw fa-sliders" data-bind="style: { color: acceptsCommands() ? '' : '#234766' }"></span></a></li>
+						<li><a class="sidebar-nav" id="movement_btn"><span class="fa fa-fw fa-arrows" data-bind="style: { color: acceptsCommands() ? '' : '#6f6f6f' }"></span></a></li>
+						<li><a class="sidebar-nav" id="offset_btn"><span class="fa fa-fw fa-sliders" data-bind="style: { color: acceptsCommands() ? '' : '#6f6f6f' }"></span></a></li>
 						<li><a class="sidebar-nav" id="camera_btn"><span class="fa fa-fw fa-camera"></span></a></li>
 					</ul>
 				</div>
 				<div class="col-xs-10 main no-padding">
 
 					<div id="status_panel" class="panel">
-						<div class="status_bar printer_status" data-bind="style: { background: printer.progress() > 0 ? 'linear-gradient(90deg, #17b566 '+printer.progress()+'%, #ed2b36 0%)':printer.power()?'#17b566':'#ed2b36' }"><div id="port" data-bind="text: printer.port"></div><div data-bind="text: printer.status"></div></div>
-						<div class="status_bar printing_time_elapsed" data-bind="visible: printer.showProgress, text:printer.time_elapsed"></div>
-						<div class="status_bar printing_time_left" data-bind="visible: printer.showProgress, text:printer.time_left"></div>
-						<div class="status_bar extruder_temp"><div data-bind="visible: printer.extruder_actual() > 0 "><span class='fa fa-lg fa-fw fa-fire'></span><span data-bind="text:extruder_temp"></span></div></div>
-						<div class="status_bar bed_temp"><div data-bind="visible: printer.bed_actual() > 0 "><span class='fa fa-lg fa-fw fa-bed'></span><span data-bind="text:bed_temp"></span></div></div>
+						<div class="status_bar printer_status" data-bind="style: { background: printer.progress() > 0 ? 'linear-gradient(90deg, #17b566 '+printer.progress()+'%, #ed2b36 0%)':printer.power()?'#17b566':'#ed2b36' }"><div class="zchange" data-bind="visible: printer.printing() || printer.paused(), text: printer.zchange"></div><div class="port" data-bind="text: printer.port"></div><div data-bind="text: printer.status"></div></div>
+						<div class="status_bar printing_time_elapsed" data-bind="visible: printer.showProgress, text: formatSeconds(printer.time_elapsed())"></div>
+						<div class="status_bar printing_time_left" data-bind="visible: printer.showProgress, text: formatSeconds(printer.aprox_time_left()), style: { color: printer.time_left() < 0 ? '#ffabab' : '' }"></div>
+						<div class="status_bar extruder_temp"><div data-bind="visible: printer.extruder_actual() > 0 "><span class='fa fa-lg fa-fw fa-fire'></span><span data-bind="html:extruder_temp"></span></div></div>
+						<div class="status_bar bed_temp"><div data-bind="visible: printer.bed_actual() > 0 "><span class='fa fa-lg fa-fw fa-bed'></span><span data-bind="html:bed_temp"></span></div></div>
 					</div>
 
 					<div id="printer_panel" class="panel">
@@ -47,9 +47,10 @@
 							<button type="button"  class="btn btn-default" data-bind="click: printer.toggleMute, enable: has_switch"><span class="fa fa-lg fa-fw fa-bell-o" data-bind="style: { color: printer.mute()?'#b1adaa':'#17b566' }"></span></button>
 							<button type="button"  class="btn btn-default" data-bind="click: printer.toggleUnload, enable: has_switch"><span class="fa fa-lg fa-fw fa-external-link" data-bind="style: { color: printer.unload()?'#3466ff':'#b1adaa' }"></span></button>
 							<button type="button"  class="btn btn-default" data-bind="click: printer.togglePowerOff, enable: has_switch "><span class="fa fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.poweroff()?'#3466ff':'#b1adaa' }"></span></button>
-							<button type="button"  class="btn btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch"><span class="fa fa-fw fa-repeat"></span> Reset</button>
-							<button type="button"  class="btn btn-default" data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><span class="fa fa-fw fa-usb"></span><span data-bind="text: (printer.ready() ? ' Disconnect' : ' Connect')"></span></button>
-							<button type="button"  class="btn btn-lg btn-default" data-bind="click: printer.togglePower, disable: !has_switch() || printer.printing() || printer.paused()"><span class="fa  fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.power()?'#17b566':'#ed2b36' }"></span> Power</button>
+							<button type="button"  class="btn btn-danger" data-bind="click: printer.resetPrinter, enable: has_switch, visible: !printer.printing() && !printer.paused() "><span class="fa fa-fw fa-repeat"></span> Reset</button>
+							<button type="button"  class="btn btn-default" data-bind="css: {'btn-default': !printer.ready(), 'btn-danger': printer.ready()}, visible: !printer.printing() && !printer.paused(), click: printer.ready()?printer.printerDisconnect:printer.printerConnect" ><span class="fa fa-fw fa-usb"></span><span data-bind="text: (printer.ready() ? ' Disconnect' : ' Connect')"></span></button>
+							<button type="button"  class="btn btn-lg btn-warning emergency" data-bind="click: printer.emergencyStop, visible: printer.printing() || printer.paused()"><span class="fa fa-lg fa-fw fa-life-ring" style="color: #ff002b;"></span>  Emergency STOP  </button>
+							<button type="button"  class="btn btn-lg btn-default" data-bind="click: printer.togglePower, visible: has_switch() && !printer.printing() && !printer.paused()"><span class="fa  fa-lg fa-fw fa-power-off" data-bind="style: { color: printer.power()?'#17b566':'#ed2b36' }"></span> Power</button>
 						</div>
 						<div class="row printer_row_2">
 							<div class="row slider-row">

@@ -27,7 +27,11 @@ function ActionModel(){
 		if (printer.bed_target() == 0) {
 			return sprintf(" %0.1fºC", printer.bed_actual());
 		} else {
-			return sprintf(" %0.1fºC / %0.1fºC", printer.bed_actual(),  printer.bed_target());
+			if (printer.bed_actual() > printer.bed_target()) {
+				return sprintf(" %0.1fºC &seArr; %0.1fºC", printer.bed_actual(),  printer.bed_target());
+			} else {
+				return sprintf(" %0.1fºC &neArr; %0.1fºC", printer.bed_actual(),  printer.bed_target());
+			}
 		}		
 	});
 	
@@ -35,7 +39,11 @@ function ActionModel(){
 		if (printer.extruder_target() == 0) {
 			return sprintf(" %0.1fºC", printer.extruder_actual());
 		} else {
-			return sprintf(" %0.1fºC / %0.1fºC", printer.extruder_actual(),  printer.extruder_target());
+			if (printer.extruder_actual() > printer.extruder_target()) {
+				return sprintf(" %0.1fºC &seArr; %0.1fºC", printer.extruder_actual(),  printer.extruder_target());
+			}	else {
+				return sprintf(" %0.1fºC &neArr; %0.1fºC", printer.extruder_actual(),  printer.extruder_target());
+			}
 		}
 	});
 	
@@ -111,7 +119,7 @@ function ActionModel(){
 			sendCommand('M106 S0');
 		} else {
 			sendCommand('M106 S'+self.fan_slider_value());
-			self.extruder_slider_value(0);
+			self.fan_slider_value(0);
 		}
 	}
 	
@@ -200,11 +208,22 @@ function PrinterModel(){
 	
 	self.port = ko.observable("");
 	self.version = ko.observable("");
-	self.status =  ko.observable("Offline");	
+	self.status =  ko.observable("Offline");
+	
+	self.zchange =  ko.observable("");
 	
 	self.progress = ko.observable(0);
-	self.time_elapsed = ko.observable("00:00:00");
-	self.time_left =  ko.observable("Calculating...");
+	self.time_elapsed = ko.observable(0);
+	self.time_left =  ko.observable(0);
+	
+	self.aprox_time_left =  ko.computed(function(){
+		if (self.time_left() >= 0) {
+			return self.time_left();
+		} else {
+			//aproximate based on percentage
+			return self.time_elapsed() * 100 / self.progress() - self.time_elapsed();
+		}
+	});
 	
 	self.power = ko.observable(true);
 	self.lights = ko.observable(false);
@@ -243,7 +262,7 @@ function PrinterModel(){
 		
 	self.acceptsCommands = ko.computed(function(){
 		if (!self.power()) return false;
-		if ( self.printing() ) { //|| self.paused() ){
+		if ( self.printing() ) {
 			return false;
 		} else {
 			if (self.ready() ) {
@@ -332,6 +351,15 @@ function PrinterModel(){
 
 	self.resetPrinter = function(){
 		bootbox.confirm({closeButton: false, message: "Reset printer board?", callback: function(result) {
+		  if (result) {
+			sendSwitchCommand("reset");
+			switchPanel("status");
+		  }
+		}});
+	}
+
+	self.emergencyStop = function(){
+		bootbox.confirm({closeButton: false, message: "STOP ?", callback: function(result) {
 		  if (result) {
 			sendSwitchCommand("reset");
 			switchPanel("status");

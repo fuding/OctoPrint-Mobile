@@ -107,21 +107,19 @@ function sendCommandByName(name){
 
 //G or M codes
 function sendCommand(data){
-	if ( printer.acceptsCommands() ) {
-		if (typeof data  === "string") {
-			command = {"command": data};
-		} else {
-			command = {"commands": data};
-		}
-		$.ajax({
-			url:  BASE_URL+"api/printer/command",
-			headers: {"X-Api-Key": API_KEY},
-			method: "POST",
-			timeout: 10000,
-			contentType: "application/json",
-			data: JSON.stringify(command)
-		});
+	if (typeof data  === "string") {
+		command = {"command": data};
+	} else {
+		command = {"commands": data};
 	}
+	$.ajax({
+		url:  BASE_URL+"api/printer/command",
+		headers: {"X-Api-Key": API_KEY},
+		method: "POST",
+		timeout: 10000,
+		contentType: "application/json",
+		data: JSON.stringify(command)
+	});
 }
 
 //switch plugin
