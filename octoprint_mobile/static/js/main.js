@@ -39,6 +39,9 @@ $(document).ready(function() {
 			document.ontouchmove = function(event){
 				return true;
 			};
+			var vp = document.getElementById('vp');
+			vp.content = "width=device-width, maximum-scale=3.0,user-scalable=yes";
+			
 			start_camera(true);
 		}
 	});
